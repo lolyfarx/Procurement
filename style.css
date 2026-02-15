@@ -1,239 +1,288 @@
-/* =================================================================
-   نظام ERP النهدي 2026 - ملف التنسيق المطور (The Master CSS)
-   تطوير: Mohamed Ramadan 2026
-   ================================================================= */
+/* Nahdi ERP Design System 2026 
+    Enterprise Grade CSS Framework
+    Main Theme: Corporate Professional 
+*/
 
-/* 1. المتغيرات والأساسيات (Global Variables) */
 :root {
-    --primary-color: #004a99;      /* لون النهدي الأساسي */
-    --secondary-color: #00aaff;
+    /* Color Palette */
+    --primary-color: #004a99;       /* النهدي الأزرق */
+    --secondary-color: #714B67;     /* Odoo Purple */
+    --accent-color: #fd7e14;        /* للتنبيهات والأزرار الهامة */
     --success-color: #28a745;
-    --warning-color: #ffc107;
     --danger-color: #dc3545;
-    --dark-bg: #2c3e50;           /* لون القائمة الجانبية Odoo Style */
-    --light-bg: #f4f7fa;
-    --border-color: #dee2e6;
-    --font-family: 'Tajawal', 'Segoe UI', sans-serif;
-    --font-size-base: 14px;       /* قابل للتغيير من الإعدادات */
-    --sidebar-width: 260px;
-    --header-height: 65px;
+    
+    /* Backgrounds & Surfaces */
+    --bg-main: #f4f7f9;
+    --sidebar-bg: #ffffff;
+    --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    --glass-bg: rgba(255, 255, 255, 0.85);
+    
+    /* Dimensions */
+    --sidebar-width: 280px;
+    --top-nav-height: 65px;
+    --border-radius: 12px;
+    
+    /* Transitions */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* 2. تصفير الإعدادات وضبط الخطوط */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: var(--font-family);
-}
-
+/* 1. Reset & Typography */
 body {
-    font-size: var(--font-size-base);
-    background-color: var(--light-bg);
-    direction: rtl; /* دعم كامل للغة العربية */
+    font-family: 'Tajawal', sans-serif;
+    background-color: var(--bg-main);
+    color: #334155;
+    margin: 0;
     overflow-x: hidden;
+    line-height: 1.6;
 }
 
-/* 3. شاشة تسجيل الدخول المتطورة (Login Screen) */
-#loginPage {
+/* 2. Professional Splash Screen */
+#splash-screen {
     position: fixed;
     inset: 0;
-    background: linear-gradient(135deg, var(--primary-color) 0%, #002a55 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background: radial-gradient(circle at center, #ffffff, #e6eff9);
     z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
-.login-card {
-    background: white;
-    width: 420px;
-    padding: 45px;
-    border-radius: 20px;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.3);
-    text-align: center;
-    animation: slideUp 0.6s ease-out;
+.splash-logo {
+    width: 180px; /* حجم اللوجو */
+    height: auto;
+    margin-bottom: 30px;
+    animation: pulseLogo 2s infinite ease-in-out;
 }
 
-.login-card img { margin-bottom: 25px; }
-
-/* 4. رمز العين داخل حقل كلمة المرور (Eye Icon Logic) */
-.pass-wrapper {
-    position: relative;
-    margin: 15px 0;
+@keyframes pulseLogo {
+    0% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(1.05); opacity: 1; }
+    100% { transform: scale(1); opacity: 0.8; }
 }
 
-.pass-wrapper input {
+/* 3. Layout Structure */
+.odoo-top-nav {
+    height: var(--top-nav-height);
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    position: fixed;
+    top: 0;
     width: 100%;
-    padding: 12px 40px 12px 15px; /* مسافة للعين */
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    outline: none;
-}
-
-.pass-wrapper i {
-    position: absolute;
-    left: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    cursor: pointer;
-    color: #888;
-}
-
-/* 5. الهيدر وشريط العنوان الداخلي */
-header {
-    background: white;
-    height: var(--header-height);
+    z-index: 999;
     display: flex;
     align-items: center;
-    justify-content: space-between;
     padding: 0 25px;
-    border-bottom: 3px solid var(--primary-color);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
 }
 
-.logo-center {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    height: 45px;
+.nav-logo-img {
+    height: 40px;
+    margin-left: 15px;
 }
 
-/* 6. القائمة الجانبية (Sidebar) */
-.erp-container { display: flex; min-height: calc(100vh - var(--header-height)); }
+.main-layout {
+    display: flex;
+    margin-top: var(--top-nav-height);
+}
 
-.sidebar {
+/* 4. Advanced Sidebar */
+.odoo-sidebar {
     width: var(--sidebar-width);
-    background: var(--dark-bg);
-    color: white;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    background: var(--sidebar-bg);
+    height: calc(100vh - var(--top-nav-height));
+    position: fixed;
+    right: 0;
+    box-shadow: -5px 0 25px rgba(0,0,0,0.02);
+    padding: 20px 15px;
+    transition: var(--transition-smooth);
+    z-index: 998;
 }
 
 .nav-item {
-    padding: 15px 25px;
-    cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 12px;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-    transition: 0.3s;
+    padding: 14px 18px;
+    margin-bottom: 8px;
+    border-radius: var(--border-radius);
+    color: #64748b;
+    text-decoration: none;
+    transition: var(--transition-smooth);
+    border: 1px solid transparent;
 }
 
-.nav-item:hover, .nav-item.active {
+.nav-item i {
+    font-size: 1.2rem;
+    margin-left: 12px;
+}
+
+.nav-item:hover {
+    background: rgba(0, 74, 153, 0.05);
+    color: var(--primary-color);
+    transform: translateX(-5px);
+}
+
+.nav-item.active {
     background: var(--primary-color);
-    padding-right: 35px;
+    color: white;
+    box-shadow: 0 8px 15px rgba(0, 74, 153, 0.2);
 }
 
-/* 7. الجداول المتقدمة (Purchase Order Table) */
-.erp-table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
+/* 5. Main Content Area */
+.content-area {
+    margin-right: var(--sidebar-width);
+    width: calc(100% - var(--sidebar-width));
+    padding: 40px;
+    transition: var(--transition-smooth);
+}
+
+/* 6. Dashboard Cards (Glassmorphism) */
+.stat-card {
     background: white;
-    border-radius: 12px;
+    border-radius: var(--border-radius);
+    padding: 25px;
+    border: 1px solid rgba(0,0,0,0.03);
+    box-shadow: var(--card-shadow);
+    position: relative;
     overflow: hidden;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-    margin-top: 20px;
+    transition: var(--transition-smooth);
 }
 
-.erp-table th {
-    background: #f8f9fa;
+.stat-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+}
+
+.stat-card::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    height: 4px;
+    background: var(--primary-color);
+}
+
+.stat-card.orange::after { background: var(--accent-color); }
+.stat-card.purple::after { background: var(--secondary-color); }
+
+.stat-card .num {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #1e293b;
+    display: block;
+    margin-top: 10px;
+}
+
+/* 7. Professional Tables */
+.card {
+    border-radius: var(--border-radius);
+    border: none;
+    box-shadow: var(--card-shadow);
+}
+
+.table {
+    border-collapse: separate;
+    border-spacing: 0 8px;
+}
+
+.table thead th {
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.8rem;
     padding: 15px;
-    color: #333;
-    font-weight: bold;
-    border-bottom: 2px solid var(--border-color);
 }
 
-.erp-table td {
-    padding: 12px;
-    border-bottom: 1px solid #eee;
-    text-align: center;
+.table tbody tr {
+    background: white;
+    transition: var(--transition-smooth);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
 }
 
-/* تنسيق المقاس الثلاثي */
-.size-input-group {
+.table tbody tr td {
+    padding: 20px 15px;
+    border: none;
+}
+
+.table tbody tr td:first-child { border-radius: 0 var(--border-radius) var(--border-radius) 0; }
+.table tbody tr td:last-child { border-radius: var(--border-radius) 0 0 var(--border-radius); }
+
+.table tbody tr:hover {
+    transform: scale(1.01);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    z-index: 10;
+}
+
+/* 8. Modern Buttons */
+.btn-primary {
+    background: var(--primary-color);
+    border: none;
+    padding: 12px 25px;
+    border-radius: 10px;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(0, 74, 153, 0.2);
+    transition: var(--transition-smooth);
+}
+
+.btn-primary:hover {
+    background: #003a7a;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 74, 153, 0.3);
+}
+
+/* 9. Quantity Control Design */
+.qty-box {
     display: flex;
-    gap: 5px;
-    justify-content: center;
+    align-items: center;
+    background: #f1f5f9;
+    border-radius: 8px;
+    padding: 5px;
+    width: fit-content;
 }
 
-.size-input-group input {
+.qty-box button {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    border: none;
+    background: white;
+    color: var(--primary-color);
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.qty-box input {
     width: 50px;
     text-align: center;
-    padding: 5px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-}
-
-/* 8. نظام أزرار الصلاحيات الست (Permissions Actions) */
-.auth-actions-bar {
-    position: fixed;
-    bottom: 30px;
-    right: calc(var(--sidebar-width) + 30px); /* يظهر يمين قائمة طلب الشراء */
-    background: rgba(255,255,255,0.95);
-    padding: 15px 30px;
-    border-radius: 50px;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.2);
-    display: flex;
-    gap: 10px;
-    border: 1px solid var(--primary-color);
-    z-index: 999;
-}
-
-.btn-auth {
     border: none;
-    padding: 10px 20px;
-    border-radius: 25px;
-    cursor: pointer;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: 0.3s;
-    color: white;
-}
-
-.btn-auth:hover { transform: translateY(-3px); }
-
-/* 9. الإحصائيات (Dashboard Tiles) */
-.stat-box {
-    background: white;
-    padding: 25px;
-    border-radius: 15px;
-    border-right: 6px solid var(--primary-color);
-    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
-}
-
-.stat-box h2 { font-size: 2.2rem; color: var(--primary-color); margin: 10px 0; }
-
-/* 10. حقوق التطوير (Developed By) */
-.dev-credit {
-    position: fixed;
-    bottom: 10px;
-    right: 20px;
-    font-size: 11px;
-    color: #999;
+    background: transparent;
     font-weight: bold;
 }
 
-/* 11. تنسيق الطباعة (Print Management) */
-@media print {
-    .sidebar, header, .auth-actions-bar, button, .no-print {
-        display: none !important;
-    }
-    .main-view { padding: 0; width: 100%; }
-    .erp-table { 
-        border: 1px solid #000; 
-        box-shadow: none;
-        border-radius: 0;
-    }
-    .erp-table td, .erp-table th { border: 1px solid #ccc; }
+/* 10. Animations */
+.animate-fade-in {
+    animation: fadeIn 0.6s ease-out forwards;
 }
 
-/* 12. الحركات (Animations) */
-@keyframes slideUp {
-    from { opacity: 0; transform: translateY(30px); }
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
+}
+
+/* 11. Responsive Design */
+@media (max-width: 992px) {
+    .odoo-sidebar {
+        transform: translateX(100%);
+    }
+    .odoo-sidebar.active {
+        transform: translateX(0);
+    }
+    .content-area {
+        margin-right: 0;
+        width: 100%;
+        padding: 20px;
+    }
 }
