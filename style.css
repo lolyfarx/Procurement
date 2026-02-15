@@ -1,142 +1,153 @@
-<!DOCTYPE html>
-<html lang="ar">
-<head>
-    <meta charset="UTF-8">
-    <title>نظام إدارة النهدي - ERP 2026</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+/* 1. المتغيرات المركزية (CSS Variables) - للتحكم الكامل من الإعدادات */
+:root {
+    --primary-color: #004a99; /* لون النهدي الأساسي */
+    --secondary-color: #00aaff;
+    --success-color: #28a745;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --dark-bg: #2c3e50;
+    --light-bg: #f4f7fa;
+    --border-color: #dee2e6;
+    --font-main: 'Segoe UI', Tahoma, sans-serif;
+    --font-size-base: 14px;
+    --sidebar-width: 260px;
+    --header-height: 65px;
+}
 
-<div id="loginPage" class="login-container">
-    <div class="login-card">
-        <img src="https://upload.wikimedia.org/wikipedia/ar/thumb/0/03/Nahdi_Logo.svg/1200px-Nahdi_Logo.svg.png" width="150" alt="Logo">
-        <h3>تسجيل الدخول</h3>
-        <input type="text" id="username" placeholder="اسم المستخدم" style="width:100%; padding:10px; margin:10px 0;">
-        <div class="password-wrapper">
-            <input type="password" id="password" placeholder="كلمة المرور" style="width:100%; padding:10px; margin:10px 0;">
-            <i class="fa fa-eye" onclick="togglePassword()"></i>
-        </div>
-        <button onclick="login()" style="width:100%; padding:10px; background:var(--main-color); color:white; border:none; cursor:pointer;">دخول</button>
-    </div>
-</div>
+/* 2. الإعدادات العامة والتصفير (Reset & Global) */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-<div id="appInterface" style="display:none;">
-    <div class="header">
-        <div><button onclick="logout()" class="no-print">تسجيل خروج <i class="fa fa-sign-out"></i></button></div>
-        <img src="https://upload.wikimedia.org/wikipedia/ar/thumb/0/03/Nahdi_Logo.svg/1200px-Nahdi_Logo.svg.png" class="logo-center">
-        <div id="userInfo">المستخدم: <span id="currentUserName"></span></div>
-    </div>
+body {
+    font-family: var(--font-main);
+    font-size: var(--font-size-base);
+    background-color: var(--light-bg);
+    direction: rtl; /* النظام يدعم العربية بالكامل */
+    color: #333;
+    overflow-x: hidden;
+}
 
-    <div class="sidebar no-print">
-        <div class="nav-item" onclick="showSection('dashboard')"><i class="fa fa-chart-line"></i> لوحة التحكم</div>
-        <div class="nav-item" onclick="showSection('purchaseOrder')"><i class="fa fa-plus-circle"></i> طلب شراء</div>
-        <div id="navOrders" class="nav-item" onclick="showSection('orderManagement')"><i class="fa fa-tasks"></i> إدارة الطلبات</div>
-        <div id="navSettings" class="nav-item" onclick="showSection('settings')"><i class="fa fa-cogs"></i> الإعدادات</div>
-    </div>
+/* 3. شاشة تسجيل الدخول الاحترافية */
+#loginPage {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(135deg, var(--primary-color) 0%, #002a55 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 99999;
+}
 
-    <div class="main-content">
-        <div id="dashboard" class="section">
-            <h2>الإحصائيات الذكية</h2>
-            <div style="display:flex; gap:20px; margin-bottom:20px;">
-                <div class="tile">اليوم: <b id="statToday">0</b></div>
-                <div class="tile">الأسبوع الماضي: <b id="statWeek">0</b></div>
-                <div class="tile">الشهر الماضي: <b id="statMonth">0</b></div>
-                <div>وقت مخصص: من <input type="date" id="filterFrom"> إلى <input type="date" id="filterTo"> <button onclick="updateStats()">تطبيق</button></div>
-            </div>
-            <div style="display:flex; gap:50px;">
-                <div style="width:50%;"><canvas id="lineChart"></canvas></div>
-                <div style="width:30%;"><canvas id="pieChart"></canvas></div>
-            </div>
-        </div>
+.login-card {
+    background: white;
+    width: 400px;
+    padding: 50px 40px;
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+    text-align: center;
+    animation: fadeInDown 0.8s ease;
+}
 
-        <div id="purchaseOrder" class="section" style="display:none;">
-            <h2>نموذج طلب شراء</h2>
-            <div id="securityHeader" style="background:#eee; padding:15px; border-radius:10px; margin-bottom:15px;">
-                القسم/الفرع: <select id="deptSelect" onchange="autoFillHeader()"></select>
-                اسم مقدم الطلب: <input type="text" id="poRequester" readonly>
-                الوظيفة: <input type="text" id="poJob" readonly>
-                التوقيت: <input type="text" id="poTime" readonly>
-            </div>
-            
-            <div class="no-print" style="margin-bottom:10px;">
-                <button onclick="addRow()"><i class="fa fa-plus"></i> إضافة بند</button>
-                <input type="file" id="excelImport" accept=".xlsx, .xls" style="display:none" onchange="importExcel(this)">
-                <button onclick="document.getElementById('excelImport').click()"><i class="fa fa-file-import"></i> استيراد</button>
-                <button onclick="exportExcel()"><i class="fa fa-file-export"></i> تصدير</button>
-                <button onclick="window.print()"><i class="fa fa-print"></i> طباعة</button>
-            </div>
+.pass-group {
+    position: relative;
+    margin: 20px 0;
+}
 
-            <table id="poTable">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>البراند</th>
-                        <th>المقاس (W)</th>
-                        <th>المقاس (H)</th>
-                        <th>المقاس (R)</th>
-                        <th class="cost-col">التكلفة</th>
-                        <th>تحريك</th>
-                        <th>حذف</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
+.pass-group i {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #888;
+    transition: 0.3s;
+}
 
-            <div id="poPermissionsBtns" class="permissions-footer"></div>
-        </div>
+.pass-group i:hover { color: var(--primary-color); }
 
-        <div id="orderManagement" class="section" style="display:none;">
-            <h2>إدارة الطلبات والبت فيها</h2>
-            <table id="ordersManagerTable">
-                <thead>
-                    <tr>
-                        <th>الطلب</th>
-                        <th>صاحب الطلب</th>
-                        <th>الجهة</th>
-                        <th>الحالة</th>
-                        <th>ملاحظات</th>
-                        <th>إجراءات</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>
+/* 4. الهيدر (شريط العنوان الداخلي) */
+header {
+    background: white;
+    height: var(--header-height);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30px;
+    border-bottom: 3px solid var(--primary-color);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
 
-        <div id="settings" class="section" style="display:none;">
-            <h2>إعدادات النظام</h2>
-            <h3>المظهر</h3>
-            اللون: <input type="color" id="themeColor" onchange="changeTheme()">
-            حجم الخط: <input type="number" id="fontSize" value="14" onchange="changeTheme()">
-            
-            <h3>إدارة المستخدمين</h3>
-            <div style="border:1px solid #ddd; padding:10px;">
-                <input type="text" id="newUname" placeholder="اسم المستخدم">
-                <input type="password" id="newPass" placeholder="كلمة المرور">
-                <input type="text" id="newJob" placeholder="الوظيفة">
-                <div id="permissionCheckboxes">
-                    <label><input type="checkbox" value="review"> مراجعة</label>
-                    <label><input type="checkbox" value="edit"> تعديل</label>
-                    <label><input type="checkbox" value="cost"> إظهار تكلفة</label>
-                    <label><input type="checkbox" value="stop"> إيقاف</label>
-                    <label><input type="checkbox" value="approve"> موافقة</label>
-                    <label><input type="checkbox" value="delete"> حذف</label>
-                    <label><input type="checkbox" value="admin"> أدمن</label>
-                </div>
-                <button onclick="addUser()">إضافة/تعديل مستخدم</button>
-            </div>
-            <table id="usersTable">
-                <thead><tr><th>المستخدم</th><th>الوظيفة</th><th>الصلاحيات</th><th>حذف</th></tr></thead>
-                <tbody></tbody>
-            </table>
-        </div>
-    </div>
+.logo-center {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 48px;
+    transition: 0.3s;
+}
 
-    <div class="developed-by">Developed By: Mohamed Ramadan 2026</div>
-</div>
+/* 5. القائمة الجانبية (Sidebar) */
+.erp-wrapper { display: flex; min-height: calc(100vh - var(--header-height)); }
 
-<script src="script.js"></script>
-</body>
-</html>
+.sidebar {
+    width: var(--sidebar-width);
+    background: var(--dark-bg);
+    color: white;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+}
+
+.nav-item {
+    padding: 18px 25px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    transition: 0.3s;
+    font-weight: 500;
+}
+
+.nav-item i { width: 20px; font-size: 1.1rem; }
+.nav-item:hover, .nav-item.active {
+    background: var(--primary-color);
+    padding-right: 35px;
+}
+
+/* 6. منطقة المحتوى الرئيسي والجداول */
+.main-content {
+    flex: 1;
+    padding: 35px;
+    background: var(--light-bg);
+    position: relative;
+}
+
+.erp-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.erp-table th {
+    background: #f8f9fa;
+    color: #444;
+    font-weight: 700;
+    padding: 15px;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.erp-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #eee;
+    vertical-align: middle;
+}

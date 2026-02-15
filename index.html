@@ -1,162 +1,146 @@
 <!DOCTYPE html>
-<html dir="rtl" lang="ar">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YN-ERP Pro | نظام النهدي المتكامل</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;500;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <title>YN-ERP Nahdi 2026</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
-<body id="master-body">
+<body>
 
-    <div id="login-screen" class="login-overlay">
-        <div class="login-card shadow-lg">
-            <div class="brand-identity mb-4">
-                <div class="logo-box">YN</div>
-                <h4 class="fw-900 mt-3 text-primary">بوابة النهدي الذكية</h4>
+    <div id="loginPage">
+        <div class="login-card">
+            <img src="https://upload.wikimedia.org/wikipedia/ar/thumb/0/03/Nahdi_Logo.svg/1200px-Nahdi_Logo.svg.png" width="160">
+            <h2 style="color:var(--primary-color); margin-top:20px;">دخول النظام الآمن</h2>
+            <input type="text" id="userIn" placeholder="اسم المستخدم" style="width:100%; padding:12px; margin-bottom:10px; border:1px solid #ddd; border-radius:5px;">
+            <div class="pass-group">
+                <input type="password" id="passIn" placeholder="كلمة المرور" style="width:100%; padding:12px; border:1px solid #ddd; border-radius:5px;">
+                <i class="fa fa-eye" id="togglePass"></i>
             </div>
-            <div class="form-group mb-3 text-start">
-                <label class="small fw-bold mb-1">اسم المستخدم</label>
-                <input type="text" id="user-login" class="form-control p-3 border-2 shadow-sm">
-            </div>
-            <div class="form-group mb-4 text-start">
-                <label class="small fw-bold mb-1">كلمة المرور</label>
-                <input type="password" id="pass-login" class="form-control p-3 border-2 shadow-sm">
-            </div>
-            <button class="btn btn-primary w-100 p-3 fw-bold shadow-lg" onclick="handleLogin()">دخول النظام</button>
-            <div id="login-error" class="alert alert-danger mt-3 py-2 small" style="display:none">بيانات الدخول غير صحيحة</div>
+            <button onclick="login()" style="width:100%; padding:12px; background:var(--primary-color); color:white; border:none; border-radius:5px; cursor:pointer; font-weight:bold;">تسجيل الدخول</button>
         </div>
     </div>
 
-    <div id="app-wrapper" style="display: none;">
-        <header class="main-header shadow-sm">
-            <div class="d-flex align-items-center">
-                <button class="btn text-white me-2" onclick="toggleSidebar()"><i class="bi bi-grid-3x3-gap-fill fs-3"></i></button>
-                <h5 class="m-0 fw-800 tracking-tight">YASIR NETWORK <span class="opacity-50">ERP</span></h5>
-            </div>
-            <div class="header-user-info d-flex align-items-center">
-                <div class="text-end me-3 border-start ps-3 border-opacity-25 border-white">
-                    <div id="nav-user-name" class="fw-bold fs-6">--</div>
-                    <div id="nav-user-job" class="small opacity-75">--</div>
-                </div>
-                <button class="btn btn-sm btn-danger rounded-pill px-3" onclick="location.reload()">خروج</button>
-            </div>
+    <div id="appContainer" style="display:none;">
+        <header>
+            <div id="userProfile"><i class="fa fa-user-circle"></i> <span id="currentUserNameDisplay"></span></div>
+            <img src="https://upload.wikimedia.org/wikipedia/ar/thumb/0/03/Nahdi_Logo.svg/1200px-Nahdi_Logo.svg.png" class="logo-center">
+            <button onclick="logout()" style="background:#dc3545; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer;">خروج</button>
         </header>
 
-        <div class="app-layout">
-            <aside class="app-sidebar" id="sidebar">
-                <nav class="nav-menu mt-4">
-                    <div class="nav-btn active" onclick="switchSection('dashboard', this)"><i class="bi bi-speedometer2"></i> لوحة التحكم</div>
-                    <div class="nav-btn" onclick="switchSection('po-order', this)"><i class="bi bi-cart-plus"></i> طلب شراء</div>
-                    <div id="nav-settings" class="nav-btn" onclick="switchSection('settings', this)" style="display:none;"><i class="bi bi-gear-wide-connected"></i> الإعدادات والصلاحيات</div>
-                </nav>
+        <div class="erp-wrapper">
+            <aside class="sidebar">
+                <div class="nav-item active" onclick="showSec('dash')"><i class="fa fa-chart-line"></i> لوحة التحكم</div>
+                <div class="nav-item" onclick="showSec('po')"><i class="fa fa-cart-plus"></i> طلب شراء</div>
+                <div id="menuOrderMgmt" class="nav-item" onclick="showSec('mgmt')"><i class="fa fa-tasks"></i> إدارة الطلبات</div>
+                <div id="menuSettings" class="nav-item" onclick="showSec('settings')"><i class="fa fa-tools"></i> الإعدادات</div>
             </aside>
 
-            <main class="app-main-content p-4">
-                
-                <section id="sec-dashboard" class="content-view">
-                    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
-                        <h4 class="fw-900">تحليلات الأداء والبيانات</h4>
-                        <div class="d-flex gap-2 bg-white p-2 rounded-3 shadow-sm border">
-                            <input type="date" id="dash-from" class="form-control form-control-sm border-0">
-                            <input type="date" id="dash-to" class="form-control form-control-sm border-0">
-                            <button class="btn btn-primary btn-sm px-3" onclick="refreshDashboard()">تطبيق</button>
-                        </div>
+            <main class="main-content">
+                <section id="sec-dash" class="section-view">
+                    <h2><i class="fa fa-dashboard"></i> الإحصائيات الذكية</h2>
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:20px; margin-bottom:30px;">
+                        <div class="login-card" style="padding:20px; width:auto;">اليوم<h3 id="statToday">0</h3></div>
+                        <div class="login-card" style="padding:20px; width:auto;">الأسبوع الماضي<h3 id="statWeek">0</h3></div>
+                        <div class="login-card" style="padding:20px; width:auto;">الشهر الماضي<h3 id="statMonth">0</h3></div>
+                        <div class="login-card" style="padding:20px; width:auto;">وقت مخصص<br><input type="date" id="dateFrom"> إلى <input type="date" id="dateTo"></div>
                     </div>
-                    
-                    <div class="row g-4 mb-5" id="stats-tiles-container">
-                        </div>
-
-                    <div class="row g-4">
-                        <div class="col-lg-8"><div class="card p-4 border-0 shadow-sm rounded-4"><canvas id="mainLineChart"></canvas></div></div>
-                        <div class="col-lg-4"><div class="card p-4 border-0 shadow-sm rounded-4"><canvas id="mainPieChart"></canvas></div></div>
+                    <div style="display:flex; flex-wrap:wrap; gap:20px;">
+                        <div style="flex:2; background:white; padding:20px; border-radius:10px;"><canvas id="lineChart"></canvas></div>
+                        <div style="flex:1; background:white; padding:20px; border-radius:10px;"><canvas id="pieChart"></canvas></div>
                     </div>
                 </section>
 
-                <section id="sec-po-order" class="content-view" style="display:none">
-                    <div class="card p-4 border-0 shadow-sm rounded-4 mb-4">
-                        <div class="d-flex justify-content-between mb-4 flex-wrap gap-2 border-bottom pb-3">
-                            <h4 class="fw-900 text-primary">تحرير طلب شراء رقمي</h4>
-                            <div class="d-flex gap-2 no-print">
-                                <input type="file" id="excel-file-input" style="display:none" accept=".xlsx, .xls" onchange="handleExcelImport(event)">
-                                <button class="btn btn-outline-success btn-sm fw-bold" onclick="document.getElementById('excel-file-input').click()"><i class="bi bi-cloud-upload"></i> استيراد Excel</button>
-                                <button class="btn btn-outline-primary btn-sm fw-bold" onclick="exportOrderToExcel()"><i class="bi bi-cloud-download"></i> تصدير Excel</button>
-                                <button class="btn btn-secondary btn-sm fw-bold px-3" onclick="window.print()"><i class="bi bi-printer"></i> طباعة</button>
-                            </div>
-                        </div>
+                <section id="sec-po" class="section-view" style="display:none;">
+                    <h2>إنشاء طلب شراء جديد</h2>
+                    <div style="background:white; padding:20px; border-radius:10px; margin-bottom:20px; display:flex; flex-wrap:wrap; gap:15px;">
+                        <div>القسم / الفرع: <select id="deptSelect" onchange="autoFillHeader()" style="padding:8px;"></select></div>
+                        <div>اسم مقدم الطلب: <input type="text" id="autoUser" readonly style="background:#eee; padding:8px;"></div>
+                        <div>الوظيفة: <input type="text" id="autoJob" readonly style="background:#eee; padding:8px;"></div>
+                        <div>التوقيت: <input type="text" id="autoTime" readonly style="background:#eee; padding:8px;"></div>
+                    </div>
 
-                        <div class="row g-3 mb-4 bg-light p-3 rounded-4 border">
-                            <div class="col-md-3">
-                                <label class="small fw-bold mb-1">القسم / الفرع (25 خيار)</label>
-                                <select id="po-dept-select" class="form-select border-0 shadow-sm"></select>
-                            </div>
-                            <div class="col-md-3"><label class="small fw-bold mb-1">اسم مقدم الطلب</label><input type="text" id="po-auto-user" class="form-control bg-white" readonly></div>
-                            <div class="col-md-3"><label class="small fw-bold mb-1">الوظيفة</label><input type="text" id="po-auto-job" class="form-control bg-white" readonly></div>
-                            <div class="col-md-3"><label class="small fw-bold mb-1">توقيت النظام</label><input type="text" id="po-auto-time" class="form-control bg-white" readonly></div>
-                        </div>
+                    <div class="no-print" style="margin-bottom:15px; display:flex; gap:10px;">
+                        <button onclick="addRow()" style="background:#28a745; color:white; border:none; padding:10px 20px; border-radius:5px; cursor:pointer;"><i class="fa fa-plus"></i> إضافة بند</button>
+                        <button onclick="document.getElementById('importFile').click()" style="background:#ffc107; border:none; padding:10px 20px; border-radius:5px; cursor:pointer;"><i class="fa fa-file-import"></i> استيراد Excel</button>
+                        <input type="file" id="importFile" style="display:none;" onchange="importExcel(this)">
+                        <button onclick="exportExcel()" style="background:#17a2b8; color:white; border:none; padding:10px 20px; border-radius:5px; cursor:pointer;"><i class="fa fa-file-export"></i> تصدير Excel</button>
+                        <button onclick="window.print()" style="background:#6c757d; color:white; border:none; padding:10px 20px; border-radius:5px; cursor:pointer;"><i class="fa fa-print"></i> طباعة منسقة</button>
+                    </div>
 
-                        <div class="table-responsive">
-                            <table class="table erp-table table-bordered align-middle text-center border-2">
-                                <thead class="table-dark">
-                                    <tr>
-                                        <th width="50">الرقم</th>
-                                        <th>البراند</th>
-                                        <th width="320">المقاس (W / H / R)</th>
-                                        <th width="100">الكمية</th>
-                                        <th width="130" class="perm-cost-col">التكلفة</th>
-                                        <th width="130" class="perm-cost-col">الإجمالي</th>
-                                        <th width="100" class="no-print">الترتيب</th>
-                                        <th width="50" class="no-print">حذف</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="po-table-body"></tbody>
-                            </table>
-                        </div>
-                        <button id="add-row-btn" class="btn btn-outline-primary fw-bold mt-2 no-print" onclick="addNewOrderRow()">+ إضافة صنف جديد</button>
+                    <table class="erp-table" id="poTable">
+                        <thead>
+                            <tr>
+                                <th>رقم</th>
+                                <th>البراند</th>
+                                <th>المقاس (W / H / R)</th>
+                                <th class="cost-col">التكلفة</th>
+                                <th class="no-print">تحريك</th>
+                                <th class="no-print">حذف</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
 
-                        <div class="action-permission-bar d-flex justify-content-end gap-2 p-3 bg-white border-top mt-5 no-print">
-                            <div id="permission-btns-wrapper" class="d-flex flex-wrap gap-2">
-                                </div>
+                    <div id="dynamicAuthBtns" class="auth-actions-bar"></div>
+                </section>
+
+                <section id="sec-mgmt" class="section-view" style="display:none;">
+                    <h2>قائمة إدارة الطلبات (البت والقرار)</h2>
+                    <table class="erp-table" id="mgmtTable">
+                        <thead>
+                            <tr>
+                                <th>كود الطلب</th>
+                                <th>الفرع/القسم</th>
+                                <th>بواسطة</th>
+                                <th>الحالة</th>
+                                <th>ملاحظات</th>
+                                <th>إجراءات القرار</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </section>
+
+                <section id="sec-settings" class="section-view" style="display:none;">
+                    <h2>إعدادات النظام والمستخدمين</h2>
+                    <div style="background:white; padding:20px; border-radius:10px; margin-bottom:20px;">
+                        <h3>تخصيص المظهر</h3>
+                        اللون الرئيسي: <input type="color" id="setThemeColor" onchange="applyTheme()">
+                        حجم الخط: <input type="number" id="setFontSize" value="14" onchange="applyTheme()">
+                    </div>
+                    <div style="background:white; padding:20px; border-radius:10px;">
+                        <h3>إضافة مستخدم جديد</h3>
+                        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px; margin-bottom:15px;">
+                            <input type="text" id="newUname" placeholder="اسم المستخدم" style="padding:10px;">
+                            <input type="text" id="newPass" placeholder="كلمة المرور" style="padding:10px;">
+                            <input type="text" id="newJob" placeholder="الوظيفة" style="padding:10px;">
                         </div>
+                        <h4>الصلاحيات الممنوحة:</h4>
+                        <div id="permsSelection" style="display:flex; flex-wrap:wrap; gap:15px; margin-bottom:15px;">
+                            <label><input type="checkbox" value="review"> مراجعة الطلب</label>
+                            <label><input type="checkbox" value="edit"> التعديل على الطلب</label>
+                            <label><input type="checkbox" value="cost"> إظهار التكلفة</label>
+                            <label><input type="checkbox" value="stop"> إيقاف/تعليق</label>
+                            <label><input type="checkbox" value="approve"> الموافقة</label>
+                            <label><input type="checkbox" value="delete"> حذف الطلب</label>
+                            <label><input type="checkbox" value="admin"> مدير نظام (Admin)</label>
+                        </div>
+                        <button onclick="addUser()" style="background:var(--primary-color); color:white; border:none; padding:10px 25px; border-radius:5px; cursor:pointer;">حفظ المستخدم</button>
+                        <table class="erp-table" style="margin-top:20px;" id="usersTable">
+                            <thead><tr><th>المستخدم</th><th>الوظيفة</th><th>الصلاحيات</th><th>إجراء</th></tr></thead>
+                            <tbody></tbody>
+                        </table>
                     </div>
                 </section>
 
-                <section id="sec-settings" class="content-view" style="display:none">
-                    <div class="row g-4">
-                        <div class="col-md-4">
-                            <div class="card p-4 border-0 shadow-sm rounded-4">
-                                <h5 class="fw-bold border-bottom pb-2 mb-4">هوية النظام المظهرية</h5>
-                                <div class="mb-3"><label class="small fw-bold mb-1">لون الواجهة الرئيسي</label><input type="color" id="style-color" class="form-control h-auto" value="#004a99" onchange="syncUIStyle()"></div>
-                                <div class="mb-3"><label class="small fw-bold mb-1">حجم الخط</label><input type="range" id="style-font" min="12" max="22" value="14" class="form-range" onchange="syncUIStyle()"></div>
-                            </div>
-                        </div>
-                        <div class="col-md-8">
-                            <div class="card p-4 border-0 shadow-sm rounded-4">
-                                <div class="d-flex justify-content-between align-items-center mb-4">
-                                    <h5 class="fw-bold m-0">إدارة حسابات الموظفين</h5>
-                                    <button class="btn btn-success btn-sm px-3" onclick="openUserModal()">+ إضافة حساب</button>
-                                </div>
-                                <div id="users-list-ui"></div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
+                <div class="dev-credit">Developed By: Mohamed Ramadan 2026</div>
             </main>
         </div>
     </div>
 
-    <div class="modal fade" id="userModal" tabindex="-1">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
-                <div class="modal-header bg-primary text-white p-4">
-                    <h5 class="modal-title fw-bold"><i class="bi bi-person-plus-fill me-2"></i> إعدادات حساب المستخدم والصلاحيات</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body p-4 text-start">
-                    <div class="row g-3 mb-4">
-                        <div class="col-md-4"><label class="small fw-bold">اسم المستخدم</label><input type="text" id="u-name" class="form-control"></div>
-                        <div class="col-md-4"><label class="small fw-bold">كلمة المرور</label><input type="text" id="u-pass" class
+    <script src="script.js"></script>
+</body>
+</html>
