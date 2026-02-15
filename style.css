@@ -1,55 +1,65 @@
 :root { 
     --p-color: #004a99; 
     --f-size: 14px; 
+    --bg-system: #f4f7fa;
 }
 
 body { 
     font-family: 'Tajawal', sans-serif; 
-    background: #f1f5f9; 
+    background: var(--bg-system); 
     font-size: var(--f-size); 
     direction: rtl; 
-    margin: 0;
+    margin: 0; overflow-x: hidden;
 }
 
+/* شاشة تسجيل الدخول */
 .login-overlay { 
-    position: fixed; inset: 0; background: #f1f5f9; z-index: 9999; 
+    position: fixed; inset: 0; background: var(--bg-system); z-index: 9999; 
     display: flex; align-items: center; justify-content: center;
 }
-
 .login-card { 
-    background: #fff; width: 440px; padding: 50px; border-radius: 40px; 
+    background: #fff; width: 440px; padding: 60px 45px; border-radius: 40px; 
     text-align: center; border-top: 12px solid var(--p-color);
 }
-
-.logo-circle {
-    width: 80px; height: 80px; background: var(--p-color); color: white;
-    border-radius: 50%; display: flex; align-items: center; justify-content: center;
-    font-size: 30px; font-weight: 900; margin: 0 auto;
+.logo-box {
+    width: 85px; height: 85px; background: var(--p-color); color: white;
+    border-radius: 25px; display: flex; align-items: center; justify-content: center;
+    font-size: 34px; font-weight: 900; margin: 0 auto; transform: rotate(-5deg);
 }
 
-.erp-header { 
-    background: var(--p-color); height: 75px; padding: 0 30px; 
+/* الهيدر والقائمة */
+.main-header { 
+    background: var(--p-color); height: 80px; padding: 0 40px; 
     display: flex; align-items: center; justify-content: space-between; 
     color: white; position: sticky; top: 0; z-index: 1000;
 }
-
-.erp-sidebar { width: 260px; background: #fff; border-left: 1px solid #e2e8f0; height: calc(100vh - 75px); }
-
-.nav-link { 
-    padding: 18px 25px; color: #475569; font-weight: 700; cursor: pointer; 
-    display: flex; align-items: center; gap: 15px; border-right: 5px solid transparent; 
+.app-layout { display: flex; min-height: calc(100vh - 80px); }
+.app-sidebar { 
+    width: 270px; background: white; border-left: 1px solid #e2e8f0; 
+    transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.nav-btn { 
+    padding: 20px 30px; cursor: pointer; color: #556080; font-weight: 700; 
+    display: flex; align-items: center; gap: 15px; border-right: 6px solid transparent; 
+}
+.nav-btn:hover, .nav-btn.active { 
+    background: #f0f7ff; color: var(--p-color); border-right-color: var(--p-color); 
 }
 
-.nav-link.active, .nav-link:hover { 
-    background: #f8fafc; color: var(--p-color); border-right-color: var(--p-color);
-}
+/* لوحة التحكم */
+.stat-card { background: white; padding: 25px; border-radius: 22px; border-right: 8px solid var(--p-color); }
+.stat-val { font-size: 32px; font-weight: 900; color: var(--p-color); }
 
-.tile-stat { background: #fff; padding: 30px; border-radius: 20px; border-right: 8px solid var(--p-color); }
+/* الجداول والتحريك */
+.erp-table thead { background: #1e293b; color: white; }
+.erp-table input { text-align: center; border-radius: 8px; border: 1px solid #cbd5e1; padding: 8px; transition: 0.2s; }
+.erp-table input:focus { border-color: var(--p-color); outline: none; box-shadow: 0 0 0 3px rgba(0,74,153,0.1); }
+.shadow-inner { box-shadow: inset 0 2px 5px rgba(0,0,0,0.05); }
 
-.erp-table input { text-align: center; border-radius: 8px; border: 1px solid #cbd5e1; padding: 5px; }
-
+/* الطباعة المخصصة */
 @media print {
-    .erp-sidebar, .erp-header, .btn, .no-print, .auth-bar { display: none !important; }
-    .erp-content { padding: 0 !important; }
+    .app-sidebar, .main-header, .btn, .no-print, .action-permission-bar { display: none !important; }
+    .app-main-content { padding: 0 !important; width: 100% !important; }
     .card { border: none !important; box-shadow: none !important; }
+    .erp-table { width: 100% !important; border: 1px solid black !important; }
 }
