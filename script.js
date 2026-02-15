@@ -1,5 +1,5 @@
 // ==========================================
-// 1. البيانات الأساسية وحساب الـ Admin
+// 1. البيانات وحساب الـ Admin
 // ==========================================
 const MASTER_USER = "admin";
 const MASTER_PASS = "@Mm123321";
@@ -22,11 +22,23 @@ let appSettings = {
 const userModal = new bootstrap.Modal(document.getElementById('userModal'));
 
 // ==========================================
-// 2. نظام تسجيل الدخول
+// 2. نظام الدخول وإظهار كلمة السر
 // ==========================================
+function togglePass(inputId, btn) {
+    const input = document.getElementById(inputId);
+    const icon = btn.querySelector('i');
+    if (input.type === "password") {
+        input.type = "text";
+        icon.classList.replace('bi-eye', 'bi-eye-slash');
+    } else {
+        input.type = "password";
+        icon.classList.replace('bi-eye-slash', 'bi-eye');
+    }
+}
+
 function handleLogin() {
-    const uInput = document.getElementById('user-login').value;
-    const pInput = document.getElementById('pass-login').value;
+    const uInput = document.getElementById('user-login').value.trim();
+    const pInput = document.getElementById('pass-login').value.trim();
     const error = document.getElementById('login-error');
 
     const found = usersDB.find(u => u.name === uInput && u.pass === pInput);
@@ -41,15 +53,15 @@ function handleLogin() {
     }
 }
 
-function handleLogout() {
-    location.reload();
-}
+function handleLogout() { location.reload(); }
 
+// ==========================================
+// 3. تهيئة التطبيق (نفس الكود السابق)
+// ==========================================
 function initApp() {
     document.getElementById('splash-screen').style.display = 'none';
     document.getElementById('app-container').style.display = 'block';
     
-    // تعبئة البيانات
     const inpDept = document.getElementById('inp-dept');
     const dashBranch = document.getElementById('dash-branch-filter');
     const userDeptInp = document.getElementById('user-dept-inp');
@@ -62,6 +74,7 @@ function initApp() {
 
     applyInterface();
     refreshDashboard();
+    renderUsersList();
     createNewRow();
 }
 
@@ -71,16 +84,12 @@ function applyInterface() {
     document.getElementById('user-avatar-initial').innerText = currentUser.name.charAt(0).toUpperCase();
     document.getElementById('inp-user').value = currentUser.name;
     document.getElementById('inp-date').value = new Date().toLocaleString('ar-SA');
-    
     changeFontSize(appSettings.fontSize);
     applyPermissions();
 }
 
 function applyPermissions() {
-    // إذا كان admin، يرى كل شيء
     if (currentUser.name === MASTER_USER) return;
-
-    // لغير الـ admin، نطبق القيود
     if (!currentUser.auths.cost) {
         document.querySelectorAll('.p-auth-cost').forEach(el => el.style.display = 'none');
         document.getElementById('set-price-toggle').checked = false;
@@ -93,7 +102,7 @@ function applyPermissions() {
 }
 
 // ==========================================
-// 3. دوال الجداول والمقاسات (بدون تغيير)
+// 4. الطلبات والجدول (نفس الكود السابق)
 // ==========================================
 function createNewRow() {
     const tbody = document.getElementById('order-rows');
@@ -129,7 +138,7 @@ function calcTotal() {
 }
 
 // ==========================================
-// 4. دوال الفلترة والرسوم البيانية (بدون تغيير)
+// 5. لوحة التحكم والفلترة
 // ==========================================
 function toggleDateInputs() {
     const period = document.getElementById('dash-period').value;
@@ -150,12 +159,10 @@ function refreshDashboard() {
         if(!matchBranch) return false;
         if (period === 'today') return oDate.toDateString() === now.toDateString();
         if (period === 'month') return oDate.getMonth() === now.getMonth();
-        if (period === 'custom' && from && to) return oDate >= new Date(from) && oDate <= new Date(to).setHours(23,59);
         return true;
     });
 
-    const total = filtered.reduce((s, o) => s + o.total, 0);
-    document.getElementById('dash-total-cost').innerText = total.toLocaleString();
+    document.getElementById('dash-total-cost').innerText = filtered.reduce((s, o) => s + o.total, 0).toLocaleString();
     document.getElementById('dash-orders-count').innerText = filtered.length;
     document.getElementById('dash-items-qty').innerText = filtered.reduce((s, o) => s + o.qty, 0);
     renderCharts(filtered);
@@ -175,8 +182,19 @@ function renderCharts(data) {
 }
 
 // ==========================================
-// 5. إدارة المستخدمين (إضافة، تعديل، حذف)
+// 6. إدارة المستخدمين (إضافة وتعديل)
 // ==========================================
+function renderUsersList() {
+    const table = document.getElementById('users-list-table');
+    table.innerHTML = "";
+    usersDB.forEach((u, i) => {
+        table.innerHTML += `<tr><td>${u.name}</td><td>${u.job}</td><td>${u.dept}</td><td>
+            <button class="btn btn-sm btn-info" onclick="openUserModal(${i})">تعديل</button>
+            <button class="btn btn-sm btn-danger" onclick="usersDB.splice(${i},1); localStorage.setItem('erp_users', JSON.stringify(usersDB)); renderUsersList();">حذف</button>
+        </td></tr>`;
+    });
+}
+
 function openUserModal(index = null) {
     document.getElementById('user-form').reset();
     document.getElementById('edit-user-index').value = index;
@@ -188,6 +206,9 @@ function openUserModal(index = null) {
         document.getElementById('user-dept-inp').value = u.dept;
         document.getElementById('auth-cost').checked = u.auths.cost;
         document.getElementById('auth-add-users').checked = u.auths.users;
+        document.getElementById('auth-print').checked = u.auths.print;
+        document.getElementById('auth-edit-content').checked = u.auths.editContent;
+        document.getElementById('auth-edit-order').checked = u.auths.editOrder;
     }
     userModal.show();
 }
@@ -213,17 +234,6 @@ function saveUser() {
     userModal.hide();
 }
 
-function renderUsersList() {
-    const table = document.getElementById('users-list-table');
-    table.innerHTML = "";
-    usersDB.forEach((u, i) => {
-        table.innerHTML += `<tr><td>${u.name}</td><td>${u.job}</td><td>${u.dept}</td><td>
-            <button class="btn btn-sm btn-info" onclick="openUserModal(${i})">تعديل</button>
-            <button class="btn btn-sm btn-danger" onclick="usersDB.splice(${i},1); localStorage.setItem('erp_users', JSON.stringify(usersDB)); renderUsersList();">حذف</button>
-        </td></tr>`;
-    });
-}
-
 function sendToCloud() {
     const order = {
         section: document.getElementById('inp-dept').value,
@@ -245,6 +255,14 @@ function togglePriceDisplay() {
 function changeFontSize(v) {
     document.getElementById('font-val').innerText = v;
     document.querySelectorAll('.erp-main-table, .form-control').forEach(el => el.style.fontSize = v + 'px');
+}
+
+function updateGlobalSettings() {
+    appSettings.themeColor = document.getElementById('set-theme-color').value;
+    appSettings.fontSize = document.getElementById('set-font-size').value;
+    localStorage.setItem('erp_theme', appSettings.themeColor);
+    localStorage.setItem('erp_fontSize', appSettings.fontSize);
+    applyInterface();
 }
 
 function showTab(id, btn) {

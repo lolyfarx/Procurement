@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YN-ERP v4.0 | شركة النهدي التجارية</title>
+    <title>YN-ERP v4.5 | شركة النهدي التجارية</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;500;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -23,7 +23,12 @@
             </div>
             <div class="text-start mb-4">
                 <label class="small fw-bold">كلمة المرور</label>
-                <input type="password" id="pass-login" class="form-control" placeholder="******">
+                <div class="input-group">
+                    <input type="password" id="pass-login" class="form-control" placeholder="******">
+                    <button class="btn btn-outline-secondary" type="button" onclick="togglePass('pass-login', this)">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                </div>
             </div>
             <button class="btn btn-primary w-100 p-2 fw-bold" onclick="handleLogin()">تسجيل الدخول</button>
             <div id="login-error" class="text-danger small mt-3" style="display:none; background:#fee2e2; padding:10px; border-radius:8px;">❌ خطأ في اسم المستخدم أو كلمة المرور!</div>
@@ -44,11 +49,9 @@
                 <button class="menu-toggle btn text-white" onclick="toggleSidebar()"><i class="bi bi-list fs-3"></i></button>
                 <span class="logo-badge d-none d-md-inline-block ms-2">YN-ERP</span>
             </div>
-
             <div class="header-center">
                 <img src="logo.png" alt="YN Logo" class="header-logo-img">
             </div>
-
             <div class="header-right">
                 <div class="user-profile">
                     <div class="text-end me-3 d-none d-md-block">
@@ -75,7 +78,6 @@
 
             <main class="erp-content">
                 <div class="container-fluid p-4">
-                    
                     <section id="tab-dashboard" class="tab-pane active">
                         <div class="filter-box mb-4 p-3 bg-white rounded shadow-sm border-right-blue">
                             <div class="row g-3 align-items-end">
@@ -90,14 +92,8 @@
                                 </div>
                                 <div id="custom-date-container" class="col-md-5" style="display: none;">
                                     <div class="row g-2">
-                                        <div class="col-6">
-                                            <label class="small fw-bold mb-1">من تاريخ:</label>
-                                            <input type="date" id="date-from" class="form-control" onchange="refreshDashboard()">
-                                        </div>
-                                        <div class="col-6">
-                                            <label class="small fw-bold mb-1">إلى تاريخ:</label>
-                                            <input type="date" id="date-to" class="form-control" onchange="refreshDashboard()">
-                                        </div>
+                                        <div class="col-6"><input type="date" id="date-from" class="form-control" onchange="refreshDashboard()"></div>
+                                        <div class="col-6"><input type="date" id="date-to" class="form-control" onchange="refreshDashboard()"></div>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
@@ -108,14 +104,12 @@
                                 </div>
                             </div>
                         </div>
-
                         <div class="row g-3 mb-4">
                             <div class="col-md-3"><div class="stat-card border-blue"><div class="stat-val" id="dash-total-cost">0</div><div class="stat-label">إجمالي التكاليف (ر.س)</div></div></div>
                             <div class="col-md-3"><div class="stat-card border-orange"><div class="stat-val" id="dash-orders-count">0</div><div class="stat-label">عدد الطلبات</div></div></div>
                             <div class="col-md-3"><div class="stat-card border-success"><div class="stat-val" id="dash-items-qty">0</div><div class="stat-label">إجمالي القطع</div></div></div>
                             <div class="col-md-3"><div class="stat-card border-info"><div class="stat-val" id="dash-avg-order">0</div><div class="stat-label">متوسط الطلب</div></div></div>
                         </div>
-
                         <div class="row g-3">
                             <div class="col-md-8"><div class="card p-3 border-0 shadow-sm h-100"><canvas id="mainChart"></canvas></div></div>
                             <div class="col-md-4"><div class="card p-3 border-0 shadow-sm h-100"><canvas id="deptPieChart"></canvas></div></div>
@@ -211,7 +205,15 @@
                         <input type="hidden" id="edit-user-index">
                         <div class="row g-3 mb-4">
                             <div class="col-md-6"><label class="small fw-bold">اسم المستخدم</label><input type="text" id="user-name-inp" class="form-control" required></div>
-                            <div class="col-md-6"><label class="small fw-bold">كلمة السر</label><input type="password" id="user-pass-inp" class="form-control" required></div>
+                            <div class="col-md-6">
+                                <label class="small fw-bold">كلمة السر</label>
+                                <div class="input-group">
+                                    <input type="password" id="user-pass-inp" class="form-control" required>
+                                    <button class="btn btn-outline-secondary" type="button" onclick="togglePass('user-pass-inp', this)">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
                             <div class="col-md-6"><label class="small fw-bold">الوظيفة</label><input type="text" id="user-job-inp" class="form-control"></div>
                             <div class="col-md-6"><label class="small fw-bold">القسم</label><select id="user-dept-inp" class="form-select"></select></div>
                         </div>
@@ -221,4 +223,16 @@
                             <div class="col-md-4"><div class="form-check card p-2"><input class="form-check-input ms-2" type="checkbox" id="auth-add-users"><label class="form-check-label small fw-bold">إضافة مستخدمين</label></div></div>
                             <div class="col-md-4"><div class="form-check card p-2"><input class="form-check-input ms-2" type="checkbox" id="auth-print"><label class="form-check-label small fw-bold">الطباعة</label></div></div>
                             <div class="col-md-4"><div class="form-check card p-2"><input class="form-check-input ms-2" type="checkbox" id="auth-edit-content"><label class="form-check-label small fw-bold">تعديل المحتوى</label></div></div>
-                            <div class="col-md-4"><div class="form-check card p-2"><input class="form-check-input ms-2" type="checkbox" id="auth-edit-order"><label class="form-check-label small fw-bold">تعديل الطلبات</label></div>
+                            <div class="col-md-4"><div class="form-check card p-2"><input class="form-check-input ms-2" type="checkbox" id="auth-edit-order"><label class="form-check-label small fw-bold">تعديل الطلبات</label></div></div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer"><button type="button" class="btn btn-primary px-5 fw-bold" onclick="saveUser()">حفظ بيانات المستخدم</button></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
