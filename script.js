@@ -1,15 +1,14 @@
 /* ============================================================
-   1. تهيئة البيانات الأساسية والفروع الـ 21
+   1. الإعدادات والبيانات الأساسية (الـ 21 فرعاً + الـ 4 أقسام)
    ============================================================ */
-const DEPARTMENTS = ["المشتريات", "الشركات", "الاستيراد", "الجملة", ...Array.from({length: 21}, (_, i) => `فرع النهدي رقم ${i + 1}`)];
+const DEPARTMENTS = ["المشتريات", "الشركات", "الاستيراد", "الجملة", ...Array.from({length: 21}, (_, i) => `فرع النهدي ${i + 1}`)];
 let users = JSON.parse(localStorage.getItem('yn_users')) || [
-    { name: "admin", pass: "@Mm123321", job: "المدير العام", perms: { admin: true, review: true, edit: true, cost: true, suspend: true, approve: true, delete: true } }
+    { name: "admin", pass: "@Mm123321", job: "مدير النظام", perms: { admin: true, review: true, edit: true, cost: true, suspend: true, approve: true, delete: true } }
 ];
-let orders = JSON.parse(localStorage.getItem('yn_orders')) || [];
 let currentUser = null;
 
 /* ============================================================
-   2. نظام تسجيل الدخول وتحميل الواجهات
+   2. نظام الدخول وتحديد الصلاحيات
    ============================================================ */
 function handleLogin() {
     const u = document.getElementById('user-login').value;
@@ -20,176 +19,194 @@ function handleLogin() {
         currentUser = found;
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('app-container').style.display = 'block';
-        initApp();
+        bootApp();
     } else {
         document.getElementById('login-error').style.display = 'block';
     }
 }
 
-function initApp() {
-    // تعبئة الأقسام الـ 25
-    const sel = document.getElementById('po-dept');
-    sel.innerHTML = DEPARTMENTS.map(d => `<option value="${d}">${d}</option>`).join('');
+function bootApp() {
+    // تعبئة الأقسام
+    const deptSel = document.getElementById('po-dept');
+    deptSel.innerHTML = DEPARTMENTS.map(d => `<option value="${d}">${d}</option>`).join('');
 
-    // بيانات الواجهة
-    document.getElementById('display-user-name').innerText = currentUser.name;
-    document.getElementById('display-user-job').innerText = currentUser.job;
-    document.getElementById('user-initials').innerText = currentUser.name[0].toUpperCase();
-    
-    // بيانات طلب الشراء التلقائية
+    // بيانات الموظف
+    document.getElementById('nav-user-name').innerText = currentUser.name;
+    document.getElementById('nav-user-job').innerText = currentUser.job;
     document.getElementById('po-user').value = currentUser.name;
     document.getElementById('po-job').value = currentUser.job;
     document.getElementById('po-time').value = new Date().toLocaleString('ar-SA');
 
-    // الصلاحيات الإدارية
-    if(!currentUser.perms.admin) document.querySelectorAll('.p-admin-only').forEach(e => e.remove());
-    
-    // بناء أزرار الصلاحيات في طلب الشراء
-    renderAuthButtons();
-    
     // إخفاء التكلفة إذا لم تكن لديه صلاحية
     if(!currentUser.perms.cost) {
-        document.querySelectorAll('.col-cost').forEach(e => e.style.display = 'none');
+        document.querySelectorAll('.cost-col').forEach(c => c.style.display = 'none');
     }
 
-    renderDashboard();
-    renderUsersTable();
-    addPoRow();
+    // بناء أزرار الأوامر بناءً على الصلاحيات
+    renderCommandButtons();
+    
+    if(!currentUser.perms.admin) document.getElementById('settings-nav').style.display = 'none';
+
+    refreshDashboard();
+    renderUsersUI();
+    addRow();
     initCharts();
 }
 
-/* ============================================================
-   3. نظام الصلاحيات المخصص (أزرار الأوامر)
-   ============================================================ */
-function renderAuthButtons() {
-    const container = document.getElementById('auth-buttons');
+function renderCommandButtons() {
+    const container = document.getElementById('command-buttons-container');
     const p = currentUser.perms;
-    const btns = [
-        { id: 'review', label: 'مراجعة طلب الشراء', icon: 'bi-eye', color: 'btn-info', active: p.review },
-        { id: 'edit', label: 'تعديل البيانات', icon: 'bi-pencil', color: 'btn-warning', active: p.edit },
-        { id: 'suspend', label: 'إيقاف / تعليق الطلب', icon: 'bi-pause-circle', color: 'btn-dark', active: p.suspend },
-        { id: 'approve', label: 'الموافقة على طلب الشراء', icon: 'bi-check-all', color: 'btn-success', active: p.approve },
-        { id: 'delete', label: 'حذف طلب الشراء', icon: 'bi-trash', color: 'btn-danger', active: p.delete }
+    const commands = [
+        { id: 'review', label: 'مراجعة طلب الشراء', color: 'btn-info', icon: 'bi-eye', act: p.review },
+        { id: 'edit', label: 'التعديل على الطلب', color: 'btn-warning', icon: 'bi-pencil', act: p.edit },
+        { id: 'suspend', label: 'إيقاف / تعليق الطلب', color: 'btn-dark', icon: 'bi-pause-circle', act: p.suspend },
+        { id: 'approve', label: 'الموافقة على الطلب', color: 'btn-success', icon: 'bi-check2-all', act: p.approve },
+        { id: 'delete', label: 'حذف طلب الشراء', color: 'btn-danger', icon: 'bi-trash', act: p.delete }
     ];
 
-    container.innerHTML = btns.filter(b => b.active).map(b => `
-        <button class="btn ${b.color} px-4 py-2 fw-bold shadow-sm" onclick="handleAction('${b.id}')">
-            <i class="bi ${b.icon} me-2"></i> ${b.label}
+    container.innerHTML = commands.filter(c => c.act).map(c => `
+        <button class="btn ${c.color} px-4 py-2 fw-bold shadow-sm" onclick="alert('تم تنفيذ أمر: ${c.label}')">
+            <i class="bi ${c.icon} me-2"></i> ${c.label}
         </button>
     `).join('');
 }
 
-function handleAction(action) {
-    alert(`تم تنفيذ إجراء: ${action} بنجاح من قبل ${currentUser.name}`);
-}
-
 /* ============================================================
-   4. إدارة طلب الشراء (تحريك، مقاسات، حسابات)
+   3. إدارة طلب الشراء (تحريك، مقاس، استيراد Excel)
    ============================================================ */
-function addPoRow() {
+function addRow(data = {}) {
     const tbody = document.getElementById('po-rows');
     const tr = document.createElement('tr');
     tr.innerHTML = `
-        <td class="row-num fw-bold"></td>
-        <td><input type="text" class="form-control" placeholder="Brand"></td>
+        <td class="row-idx fw-bold"></td>
+        <td><input type="text" class="form-control" value="${data.brand || ''}" placeholder="Brand"></td>
         <td>
             <div class="d-flex gap-1 justify-content-center">
-                <input type="text" class="form-control text-center w-25" placeholder="W">
-                <input type="text" class="form-control text-center w-25" placeholder="H">
-                <input type="text" class="form-control text-center w-25" placeholder="R">
+                <input type="text" class="form-control text-center w-25" value="${data.w || ''}" placeholder="W">
+                <input type="text" class="form-control text-center w-25" value="${data.h || ''}" placeholder="H">
+                <input type="text" class="form-control text-center w-25" value="${data.r || ''}" placeholder="R">
             </div>
         </td>
-        <td><input type="number" class="form-control qty" value="1" oninput="recalc()"></td>
-        <td class="col-cost"><input type="number" class="form-control cost" value="0" oninput="recalc()"></td>
-        <td class="col-cost fw-bold text-primary total-cell">0.00</td>
-        <td>
-            <div class="btn-group">
-                <button class="btn btn-sm btn-light border" onclick="moveRow(this, -1)">↑</button>
-                <button class="btn btn-sm btn-light border" onclick="moveRow(this, 1)">↓</button>
+        <td><input type="number" class="form-control qty" value="${data.qty || 1}" oninput="calc()"></td>
+        <td class="cost-col"><input type="number" class="form-control cost" value="${data.cost || 0}" oninput="calc()"></td>
+        <td class="cost-col fw-bold text-primary total-row">0.00</td>
+        <td class="no-print">
+            <div class="btn-group shadow-sm">
+                <button class="btn btn-sm btn-light border" onclick="move(this, -1)">↑</button>
+                <button class="btn btn-sm btn-light border" onclick="move(this, 1)">↓</button>
             </div>
         </td>
-        <td><button class="btn btn-sm btn-outline-danger" onclick="this.closest('tr').remove(); recalc();">×</button></td>
+        <td class="no-print"><button class="btn btn-sm btn-danger" onclick="this.closest('tr').remove(); calc();">×</button></td>
     `;
     tbody.appendChild(tr);
-    recalc();
+    if(!currentUser.perms.cost) tr.querySelectorAll('.cost-col').forEach(c => c.style.display = 'none');
+    calc();
 }
 
-function moveRow(btn, dir) {
+function move(btn, dir) {
     const row = btn.closest('tr');
-    if (dir === -1 && row.previousElementSibling) row.parentNode.insertBefore(row, row.previousElementSibling);
-    if (dir === 1 && row.nextElementSibling) row.parentNode.insertBefore(row.nextElementSibling, row);
-    recalc();
+    if(dir === -1 && row.previousElementSibling) row.parentNode.insertBefore(row, row.previousElementSibling);
+    if(dir === 1 && row.nextElementSibling) row.parentNode.insertBefore(row.nextElementSibling, row);
+    calc();
 }
 
-function recalc() {
+function calc() {
     document.querySelectorAll('#po-rows tr').forEach((row, i) => {
-        row.querySelector('.row-num').innerText = i + 1;
+        row.querySelector('.row-idx').innerText = i + 1;
         const q = row.querySelector('.qty').value || 0;
         const c = row.querySelector('.cost').value || 0;
-        row.querySelector('.total-cell').innerText = (q * c).toFixed(2);
+        row.querySelector('.total-row').innerText = (q * c).toFixed(2);
     });
 }
 
+/* --- استيراد Excel حقيقي --- */
+function processExcel(e) {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    reader.onload = (event) => {
+        const data = new Uint8Array(event.target.result);
+        const workbook = XLSX.read(data, {type: 'array'});
+        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+        const rows = XLSX.utils.sheet_to_json(sheet);
+        
+        document.getElementById('po-rows').innerHTML = ''; // تفريغ الجدول
+        rows.forEach(r => {
+            addRow({ brand: r.البراند, w: r.عرض, h: r.ارتفاع, r: r.قطر, qty: r.الكمية, cost: r.التكلفة });
+        });
+    };
+    reader.readAsArrayBuffer(file);
+}
+
 /* ============================================================
-   5. لوحة التحكم والإحصائيات
+   4. الإحصائيات والرسوم البيانية
    ============================================================ */
-function renderDashboard() {
+function refreshDashboard() {
+    const container = document.getElementById('stats-tiles');
     const stats = [
-        { title: "إجمالي اليوم", val: "12,450", color: "#004a99" },
-        { title: "الأسبوع الماضي", val: "85,200", color: "#f39c12" },
-        { title: "الشهر الماضي", val: "320,000", color: "#10b981" },
-        { title: "وقت مخصص", val: "0.00", color: "#6366f1" }
+        { label: "إحصائيات اليوم", val: "14,500", color: "#004a99" },
+        { label: "الأسبوع الماضي", val: "92,000", color: "#f39c12" },
+        { label: "الشهر الماضي", val: "340,000", color: "#10b981" },
+        { label: "وقت مخصص", val: "0.00", color: "#6366f1" }
     ];
-    document.getElementById('stats-grid').innerHTML = stats.map(s => `
+    container.innerHTML = stats.map(s => `
         <div class="col-md-3">
             <div class="tile-stat shadow-sm">
-                <h6 class="text-muted fw-bold small">${s.title}</h6>
-                <h3 class="fw-bold mb-0" style="color:${s.color}">${s.val} <small class="fs-6">ر.س</small></h3>
+                <div class="small fw-bold text-muted mb-1">${s.label}</div>
+                <div class="h3 fw-bold m-0" style="color:${s.color}">${s.val} <small class="fs-6">ر.س</small></div>
             </div>
         </div>
     `).join('');
 }
 
+function initCharts() {
+    new Chart(document.getElementById('lineChart'), {
+        type: 'line',
+        data: { labels: ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس'], datasets: [{ label: 'الطلبات', data: [12, 19, 10, 15, 8], borderColor: '#004a99', tension: 0.4 }] }
+    });
+    new Chart(document.getElementById('pieChart'), {
+        type: 'doughnut',
+        data: { labels: ['مشتريات','جملة','فروع'], datasets: [{ data: [40, 20, 40], backgroundColor: ['#004a99','#f39c12','#10b981'] }] }
+    });
+}
+
 /* ============================================================
-   6. أدوات مساعدة (Excel، Theme، Users)
+   5. الإعدادات وإدارة المظهر
    ============================================================ */
-function applyTheme() {
-    const color = document.getElementById('theme-color').value;
-    const size = document.getElementById('theme-font-size').value;
-    document.documentElement.style.setProperty('--p-color', color);
-    document.documentElement.style.setProperty('--f-size', size + 'px');
+function applyStyle() {
+    const c = document.getElementById('set-color').value;
+    const s = document.getElementById('set-font').value;
+    document.documentElement.style.setProperty('--p-color', c);
+    document.documentElement.style.setProperty('--f-size', s + 'px');
 }
 
 function saveUser() {
-    const user = {
+    const newUser = {
         name: document.getElementById('u-name').value,
         pass: document.getElementById('u-pass').value,
         job: document.getElementById('u-job').value,
         perms: {
-            admin: document.getElementById('p-admin').checked,
             review: document.getElementById('p-review').checked,
             edit: document.getElementById('p-edit').checked,
             cost: document.getElementById('p-cost').checked,
             suspend: document.getElementById('p-suspend').checked,
             approve: document.getElementById('p-approve').checked,
-            delete: document.getElementById('p-delete').checked
+            delete: document.getElementById('p-delete').checked,
+            admin: document.getElementById('p-admin').checked
         }
     };
-    users.push(user);
+    users.push(newUser);
     localStorage.setItem('yn_users', JSON.stringify(users));
     location.reload();
 }
 
 function showTab(id, btn) {
-    document.querySelectorAll('.tab-content').forEach(x => x.style.display = 'none');
+    document.querySelectorAll('.tab-pane').forEach(p => p.style.display = 'none');
     document.getElementById('tab-' + id).style.display = 'block';
-    document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
+    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
     btn.classList.add('active');
 }
 
-function initCharts() {
-    const ctxL = document.getElementById('lineChart');
-    new Chart(ctxL, { type: 'line', data: { labels: ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس'], datasets: [{ label: 'تدفق الطلبات', data: [12, 19, 3, 5, 2], borderColor: '#004a99', tension: 0.4 }] } });
-    const ctxP = document.getElementById('pieChart');
-    new Chart(ctxP, { type: 'doughnut', data: { labels: ['المشتريات','الشركات','الفروع'], datasets: [{ data: [300, 50, 100], backgroundColor: ['#004a99','#f39c12','#10b981'] }] } });
+function toggleSidebar() {
+    const s = document.getElementById('sidebar');
+    s.style.width = (s.style.width === '0px') ? '260px' : '0px';
 }

@@ -1,80 +1,55 @@
 :root { 
     --p-color: #004a99; 
     --f-size: 14px; 
-    --bg-light: #f8fafc;
 }
 
 body { 
     font-family: 'Tajawal', sans-serif; 
+    background: #f1f5f9; 
     font-size: var(--f-size); 
-    background: var(--bg-light); 
     direction: rtl; 
     margin: 0;
 }
 
-.erp-header { 
-    background: var(--p-color); 
-    height: 70px; 
-    padding: 0 30px; 
-    display: flex; 
-    align-items: center; 
-    justify-content: space-between; 
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    position: sticky; top: 0; z-index: 1000;
-}
-
-.sidebar { 
-    width: 260px; 
-    background: #fff; 
-    min-height: calc(100vh - 70px); 
-    border-left: 1px solid #e2e8f0;
-}
-
-.nav-item { 
-    padding: 18px 25px; 
-    cursor: pointer; 
-    color: #64748b; 
-    font-weight: bold; 
-    display: flex; 
-    align-items: center; 
-    gap: 15px;
-    border-right: 5px solid transparent;
-}
-
-.nav-item.active, .nav-item:hover { 
-    background: #f1f5f9; 
-    color: var(--p-color); 
-    border-right-color: var(--p-color);
-}
-
 .login-overlay { 
-    position: fixed; inset: 0; background: var(--bg-light); 
-    z-index: 9999; display: flex; align-items: center; justify-content: center;
+    position: fixed; inset: 0; background: #f1f5f9; z-index: 9999; 
+    display: flex; align-items: center; justify-content: center;
 }
 
 .login-card { 
-    background: #fff; width: 420px; padding: 50px; border-radius: 30px; 
-    text-align: center; border-top: 10px solid var(--p-color);
+    background: #fff; width: 440px; padding: 50px; border-radius: 40px; 
+    text-align: center; border-top: 12px solid var(--p-color);
 }
 
-.avatar { 
-    width: 45px; height: 45px; background: #fff; color: var(--p-color);
+.logo-circle {
+    width: 80px; height: 80px; background: var(--p-color); color: white;
     border-radius: 50%; display: flex; align-items: center; justify-content: center;
-    font-weight: 900;
+    font-size: 30px; font-weight: 900; margin: 0 auto;
 }
 
-.erp-table thead { background: #1e293b; color: #fff; }
-.erp-table input { 
-    border: 1px solid #cbd5e1; text-align: center; border-radius: 8px; padding: 6px; 
+.erp-header { 
+    background: var(--p-color); height: 75px; padding: 0 30px; 
+    display: flex; align-items: center; justify-content: space-between; 
+    color: white; position: sticky; top: 0; z-index: 1000;
 }
 
-.tile-stat { 
-    background: #fff; padding: 25px; border-radius: 20px; 
-    border-right: 6px solid var(--p-color); 
+.erp-sidebar { width: 260px; background: #fff; border-left: 1px solid #e2e8f0; height: calc(100vh - 75px); }
+
+.nav-link { 
+    padding: 18px 25px; color: #475569; font-weight: 700; cursor: pointer; 
+    display: flex; align-items: center; gap: 15px; border-right: 5px solid transparent; 
 }
+
+.nav-link.active, .nav-link:hover { 
+    background: #f8fafc; color: var(--p-color); border-right-color: var(--p-color);
+}
+
+.tile-stat { background: #fff; padding: 30px; border-radius: 20px; border-right: 8px solid var(--p-color); }
+
+.erp-table input { text-align: center; border-radius: 8px; border: 1px solid #cbd5e1; padding: 5px; }
 
 @media print {
-    .sidebar, .erp-header, .btn, .no-print, .auth-actions-zone { display: none !important; }
-    .content-area { padding: 0 !important; }
-    .card { border: 1px solid #ddd !important; box-shadow: none !important; }
+    .erp-sidebar, .erp-header, .btn, .no-print, .auth-bar { display: none !important; }
+    .erp-content { padding: 0 !important; }
+    .card { border: none !important; box-shadow: none !important; }
 }
