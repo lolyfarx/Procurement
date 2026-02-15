@@ -1,120 +1,127 @@
 <!DOCTYPE html>
-<html dir="rtl" lang="ar" id="mainHtml">
+<html dir="rtl" lang="ar">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YN-ERP | شركة النهدي التجارية</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;500;700&display=swap" rel="stylesheet">
+    <title>YN-ERP v2026 | شركة النهدي التجارية</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;500;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
 
     <div id="splash-screen">
-        <div class="splash-content">
-            <div class="logo-box">YN</div>
-            <h2 class="company-name">شركة ياسر يسلم النهدي التجارية</h2>
-            <div class="loader-bar"><div></div></div>
-            <p class="dev-tag">نظام المشتريات المطور 2026</p>
+        <div class="splash-content text-center">
+            <div class="logo-box-main mx-auto">YN</div>
+            <h2 class="mt-3 fw-bold color-primary">شركة ياسر يسلم النهدي التجارية</h2>
+            <div class="loader-wrapper mt-4"><div class="loader-progress"></div></div>
         </div>
     </div>
 
     <div id="app-container" style="display: none;">
-        <header class="odoo-top-nav">
-            <div class="nav-left">
-                <i class="bi bi-list mobile-menu-btn" onclick="toggleSidebar()"></i>
-                <span class="app-title">YN-ERP</span>
+        <header class="erp-header">
+            <div class="header-left">
+                <button class="menu-toggle" onclick="toggleSidebar()"><i class="bi bi-list"></i></button>
+                <div class="header-logo-section">
+                    <span class="logo-mini">YN</span>
+                    <span class="company-name-nav">شركة ياسر يسلم النهدي التجارية</span>
+                </div>
             </div>
-            <div class="nav-right d-flex align-items-center">
-                <span id="display-user-name" class="me-2 fw-bold">Admin</span>
-                <div class="user-avatar">Y</div>
+            <div class="header-right">
+                <div class="user-info">
+                    <div class="text-end me-2 d-none d-md-block">
+                        <div id="user-display-name" class="fw-bold small">المدير العام</div>
+                        <div class="badge bg-success" style="font-size: 10px;">ADIMN</div>
+                    </div>
+                    <div class="user-avatar-circle">Y</div>
+                </div>
             </div>
         </header>
 
-        <div class="main-layout">
-            <aside class="odoo-sidebar" id="sidebar">
-                <div class="menu-section">القائمة الرئيسية</div>
-                <a href="#" class="nav-item active" onclick="showSection('dashboard')"><i class="bi bi-speedometer2"></i> لوحة التحكم</a>
-                <a href="#" class="nav-item" onclick="showSection('new-request')"><i class="bi bi-cart-plus"></i> طلب شراء جديد</a>
-                <div class="menu-section">النظام</div>
-                <a href="#" class="nav-item" onclick="showSection('settings')"><i class="bi bi-gear"></i> الإعدادات</a>
+        <div class="erp-wrapper">
+            <aside class="erp-sidebar" id="sidebar">
+                <div class="sidebar-group">العمليات</div>
+                <nav>
+                    <a href="#" class="nav-link active" onclick="switchTab('dashboard', this)"><i class="bi bi-grid-1x2-fill"></i> لوحة التحكم</a>
+                    <a href="#" class="nav-link" onclick="switchTab('orders', this)"><i class="bi bi-cart-check-fill"></i> طلب شراء</a>
+                </nav>
+                <div class="sidebar-group">النظام</div>
+                <nav>
+                    <a href="#" class="nav-link" onclick="switchTab('settings', this)"><i class="bi bi-gear-wide-connected"></i> الإعدادات</a>
+                </nav>
+                <div class="developer-footer">Developed by: Mohamed Ramadan 2026</div>
             </aside>
 
-            <main class="content-area p-3">
-                <div id="section-dashboard">
-                    <div class="row g-3 mb-4">
-                        <div class="col-6 col-md-3"><div class="stat-card blue"><h6>إجمالي المشتريات</h6><p class="num">1.2M</p></div></div>
-                        <div class="col-6 col-md-3"><div class="stat-card orange"><h6>طلبات اليوم</h6><p class="num">8</p></div></div>
-                    </div>
-                    <div class="card p-3 border-0 shadow-sm">
-                        <canvas id="mainChart" height="120"></canvas>
-                    </div>
-                </div>
+            <main class="erp-main">
+                <div class="container-fluid p-4">
+                    <section id="tab-dashboard" class="erp-tab animate-fade">
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-3"><div class="kpi-card"><div class="kpi-icon blue"><i class="bi bi-currency-dollar"></i></div><div class="kpi-data"><span>إجمالي القيمة</span><h3 id="stat-total">0.00</h3></div></div></div>
+                            <div class="col-md-3"><div class="kpi-card"><div class="kpi-icon orange"><i class="bi bi-box-seam"></i></div><div class="kpi-data"><span>عدد القطع</span><h3 id="stat-count">0</h3></div></div></div>
+                        </div>
+                        <div class="card border-0 shadow-sm p-3" style="height: 400px;"><canvas id="mainChart"></canvas></div>
+                    </section>
 
-                <div id="section-new-request" style="display:none;">
-                    <div class="card p-3 shadow-sm border-0">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h5 class="fw-bold mb-0">إنشاء طلب شراء</h5>
-                            <div class="btn-group">
-                                <button class="btn btn-outline-success btn-sm" onclick="document.getElementById('fileInput').click()"><i class="bi bi-file-earmark-excel"></i> استيراد</button>
-                                <button class="btn btn-outline-primary btn-sm" onclick="exportToExcel()"><i class="bi bi-download"></i> تصدير</button>
-                                <input type="file" id="fileInput" hidden onchange="importExcel(event)">
+                    <section id="tab-orders" class="erp-tab animate-fade" style="display:none;">
+                        <div class="card border-0 shadow-sm p-4">
+                            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                                <h5 class="fw-bold mb-0 text-primary"><i class="bi bi-file-earmark-plus"></i> نموذج طلب شراء</h5>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-outline-secondary btn-sm" onclick="printOrder()"><i class="bi bi-printer"></i> طباعة</button>
+                                    <button class="btn btn-import btn-sm" onclick="document.getElementById('excelFile').click()"><i class="bi bi-file-earmark-spreadsheet"></i> استيراد</button>
+                                    <input type="file" id="excelFile" hidden onchange="importData(event)">
+                                </div>
                             </div>
+                            <div class="row g-3 mb-4 bg-light p-3 rounded">
+                                <div class="col-md-4"><label class="erp-label">القسم/الفرع</label><select id="order-dept" class="form-select"></select></div>
+                                <div class="col-md-4"><label class="erp-label">المسؤول</label><input type="text" id="order-user" class="form-control" readonly></div>
+                                <div class="col-md-4"><label class="erp-label">التاريخ</label><input type="text" id="order-date" class="form-control" readonly></div>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table erp-table align-middle">
+                                    <thead>
+                                        <tr>
+                                            <th>البراند</th>
+                                            <th>المقاس (W/H/R)</th>
+                                            <th>الكمية</th>
+                                            <th class="price-access">التكلفة</th>
+                                            <th class="price-access">الإجمالي</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="order-table-body"></tbody>
+                                </table>
+                            </div>
+                            <button class="btn btn-add-row mt-2" onclick="addRow()">+ صنف جديد</button>
+                            <div class="total-area mt-4 text-end price-access">
+                                <h4 class="fw-bold">إجمالي الطلب: <span id="final-total">0</span> ر.س</h4>
+                            </div>
+                            <button class="btn btn-submit-erp w-100 mt-4 p-3 fw-bold" onclick="submitOrder()"><i class="bi bi-cloud-arrow-up"></i> إرسال واعتماد الطلب</button>
                         </div>
-                        <div class="row g-2 mb-3">
-                            <div class="col-md-4"><label class="small fw-bold">الفرع / القسم</label><select id="req-dept" class="form-select"></select></div>
-                            <div class="col-md-4"><label class="small fw-bold">المسؤول عن الطلب</label><input type="text" id="resp-user" class="form-control" readonly></div>
-                            <div class="col-md-4"><label class="small fw-bold">التاريخ والوقت</label><input type="text" id="curr-date" class="form-control bg-light" readonly></div>
-                        </div>
-                        <div class="table-responsive">
-                            <table class="table table-bordered align-middle">
-                                <thead class="bg-light">
-                                    <tr class="small text-center">
-                                        <th>البراند</th>
-                                        <th>المقاس (العرض/الارتفاع/القطر)</th>
-                                        <th>الكمية</th>
-                                        <th class="price-col">التكلفة</th>
-                                        <th>-</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="items-table"></tbody>
-                            </table>
-                        </div>
-                        <button class="btn btn-sm btn-outline-secondary mb-3" onclick="addNewRow()">+ إضافة صنف</button>
-                        <div class="price-col text-end mb-3">
-                            <h6 class="fw-bold">إجمالي الطلب: <span id="grand-total">0</span> ر.س</h6>
-                        </div>
-                        <button class="btn btn-odoo-primary w-100 p-3 fw-bold" onclick="submitFinal()">إرسال الطلب للاعتماد</button>
-                    </div>
-                </div>
+                    </section>
 
-                <div id="section-settings" style="display:none;">
-                    <div class="card p-3 shadow-sm border-0">
-                        <h5 class="fw-bold mb-3 border-bottom pb-2">إعدادات المستخدم والصلاحيات</h5>
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label>اسم المستخدم</label><input type="text" id="set-u" class="form-control mb-2" placeholder="Admin">
-                                <label>كلمة المرور</label><input type="password" id="set-p" class="form-control mb-2" placeholder="****">
-                                <div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox" id="set-show-price" checked><label class="form-check-label">إظهار التكلفة والإجماليات</label></div>
-                                <button class="btn btn-primary w-100" onclick="saveSettings()">حفظ التغييرات</button>
-                            </div>
-                            <div class="col-md-6 border-start">
-                                <div class="p-3 bg-light rounded text-center">
-                                    <h6>تفاصيل النظام</h6>
-                                    <p class="small text-muted mb-1">الإصدار: v2026.1.5</p>
-                                    <p class="small text-muted mb-1">المطور: Gemini ERP Expert</p>
-                                    <p class="small text-muted">شركة ياسر يسلم النهدي التجارية</p>
+                    <section id="tab-settings" class="erp-tab animate-fade" style="display:none;">
+                        <div class="card border-0 shadow-sm p-4">
+                            <h5 class="fw-bold mb-4 border-bottom pb-2">إعدادات النظام</h5>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="erp-label">اسم المستخدم</label><input type="text" id="cfg-username" class="form-control mb-3">
+                                    <div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox" id="cfg-show-price" checked><label class="form-check-label">تفعيل عرض الأسعار</label></div>
+                                    <button class="btn btn-primary" onclick="saveSettings()">حفظ الإعدادات</button>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </section>
                 </div>
             </main>
         </div>
     </div>
+
+    <div id="print-section" style="display:none;"></div>
+
     <script src="script.js"></script>
 </body>
 </html>
