@@ -9,9 +9,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     
     <style>
-        /* =========================================
-           أضخم ملف CSS شامل لكافة ميزات النظام
-           ========================================= */
+        /* =================================================================
+           1. أضخم ملف CSS (The Master Stylesheet) - لا نقصان هنا
+           ================================================================= */
         :root {
             --primary-color: #004a99;
             --secondary-color: #00aaff;
@@ -23,72 +23,108 @@
             --border-color: #dee2e6;
             --sidebar-width: 260px;
             --header-height: 65px;
-            --font-size: 14px;
+            --font-size-base: 14px;
         }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Tajawal', 'Segoe UI', Tahoma, sans-serif;
-            font-size: var(--font-size);
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            font-size: var(--font-size-base);
             background-color: var(--light-bg);
-            margin: 0;
             direction: rtl;
+            color: #333;
+            overflow-x: hidden;
         }
 
-        /* شاشة تسجيل الدخول الاحترافية */
+        /* تنسيق شاشة الدخول المصلح (من الصور) */
         #loginPage {
             position: fixed; inset: 0; z-index: 10000;
             background: linear-gradient(135deg, var(--primary-color) 0%, #002a55 100%);
             display: flex; align-items: center; justify-content: center;
         }
-        .login-card {
-            background: white; width: 420px; padding: 45px; border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.3); text-align: center;
-        }
-        .pass-group { position: relative; margin: 20px 0; }
-        .pass-group input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
-        .pass-group i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #666; }
 
-        /* الهيدر واللوجو */
-        header {
-            background: white; height: var(--header-height); display: flex; align-items: center;
-            justify-content: space-between; padding: 0 25px; border-bottom: 3px solid var(--primary-color);
-            position: sticky; top: 0; z-index: 1000;
+        .login-card {
+            background: white; width: 420px; padding: 50px 40px; border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3); text-align: center;
+            animation: fadeInDown 0.8s ease;
         }
+
+        .login-card img { height: 60px; margin-bottom: 20px; }
+
+        .pass-group { position: relative; margin: 20px 0; }
+        .pass-group input { 
+            width: 100%; padding: 12px 15px 12px 40px; 
+            border: 1px solid #ddd; border-radius: 8px; font-size: 16px;
+        }
+        .pass-group i { 
+            position: absolute; left: 12px; top: 50%; 
+            transform: translateY(-50%); cursor: pointer; color: #888; font-size: 18px;
+        }
+
+        /* الهيدر والقائمة الجانبية */
+        header {
+            background: white; height: var(--header-height);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 30px; border-bottom: 3px solid var(--primary-color);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000;
+        }
+
         .logo-center { position: absolute; left: 50%; transform: translateX(-50%); height: 48px; }
 
-        /* التقسيم الرئيسي والقائمة الجانبية */
-        .erp-container { display: flex; min-height: calc(100vh - var(--header-height)); }
-        .sidebar { width: var(--sidebar-width); background: var(--dark-bg); color: white; transition: 0.3s; }
-        .nav-item { padding: 18px 25px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; gap: 15px; }
+        .erp-wrapper { display: flex; min-height: calc(100vh - var(--header-height)); }
+
+        .sidebar {
+            width: var(--sidebar-width); background: var(--dark-bg); color: white;
+            transition: 0.4s; display: flex; flex-direction: column;
+        }
+
+        .nav-item {
+            padding: 18px 25px; cursor: pointer; display: flex; align-items: center;
+            gap: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); transition: 0.3s;
+        }
+
         .nav-item:hover, .nav-item.active { background: var(--primary-color); padding-right: 35px; }
 
-        .main-view { flex: 1; padding: 35px; position: relative; }
+        /* منطقة المحتوى والجداول */
+        .main-content { flex: 1; padding: 35px; background: var(--light-bg); }
 
-        /* الجداول الاحترافية */
-        .erp-table { width: 100%; border-collapse: separate; border-spacing: 0; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        .erp-table th { background: #f8f9fa; padding: 15px; border-bottom: 2px solid var(--border-color); font-weight: bold; }
-        .erp-table td { padding: 12px; border-bottom: 1px solid #eee; text-align: center; }
+        .erp-table {
+            width: 100%; border-collapse: separate; border-spacing: 0;
+            background: white; border-radius: 12px; overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-top: 20px;
+        }
 
-        /* المقاس الثلاثي */
-        .size-group { display: flex; gap: 4px; justify-content: center; }
+        .erp-table th { background: #f8f9fa; color: #444; padding: 15px; border-bottom: 2px solid var(--border-color); }
+        .erp-table td { padding: 12px 15px; border-bottom: 1px solid #eee; text-align: center; }
+
+        .size-group { display: flex; gap: 5px; justify-content: center; }
         .size-group input { width: 45px; text-align: center; padding: 5px; border: 1px solid #ddd; border-radius: 4px; }
 
-        /* أزرار الصلاحيات الست (أسفل اليمين) */
+        /* أزرار الصلاحيات الست الطافية */
         .auth-actions-bar {
             position: fixed; bottom: 30px; right: calc(var(--sidebar-width) + 30px);
-            background: white; padding: 12px 25px; border-radius: 50px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.2); display: flex; gap: 10px; border: 1px solid var(--primary-color);
+            background: white; padding: 15px 30px; border-radius: 50px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.2); display: flex; gap: 12px;
+            border: 1px solid var(--primary-color); z-index: 999;
         }
-        .btn-auth { border: none; padding: 10px 18px; border-radius: 25px; cursor: pointer; font-weight: bold; color: white; display: flex; align-items: center; gap: 8px; }
 
-        /* حقوق المطور */
-        .dev-credit { position: fixed; bottom: 10px; right: 20px; font-size: 11px; color: #777; font-weight: bold; }
+        .btn-auth {
+            border: none; padding: 10px 20px; border-radius: 25px; cursor: pointer;
+            font-weight: bold; color: white; display: flex; align-items: center; gap: 8px;
+        }
 
-        /* الطباعة */
+        .dev-credit { position: fixed; bottom: 10px; right: 20px; font-size: 11px; color: #999; font-weight: bold; }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         @media print {
             .sidebar, header, .auth-actions-bar, button, .no-print { display: none !important; }
-            .main-view { padding: 0; width: 100%; }
-            .erp-table { border: 1px solid #000; border-radius: 0; }
+            .main-content { margin: 0; padding: 0; width: 100%; }
+            .erp-table { border: 1px solid #000; box-shadow: none; }
         }
     </style>
 </head>
@@ -96,60 +132,56 @@
 
     <div id="loginPage">
         <div class="login-card">
-            <img src="https://upload.wikimedia.org/wikipedia/ar/thumb/0/03/Nahdi_Logo.svg/1200px-Nahdi_Logo.svg.png" width="160">
-            <h2 style="color:var(--primary-color); margin-top:15px;">دخول النظام الآمن</h2>
+            <img src="https://upload.wikimedia.org/wikipedia/ar/thumb/0/03/Nahdi_Logo.svg/1200px-Nahdi_Logo.svg.png">
+            <h2 style="color:var(--primary-color); margin-bottom:20px;">دخول النظام الآمن</h2>
             <input type="text" id="userInput" placeholder="اسم المستخدم" style="width:100%; padding:12px; margin-bottom:10px; border:1px solid #ddd; border-radius:8px;">
             <div class="pass-group">
                 <input type="password" id="passInput" placeholder="كلمة المرور">
                 <i class="fa fa-eye" id="toggleEye"></i>
             </div>
-            <button onclick="login()" style="width:100%; padding:12px; background:var(--primary-color); color:white; border:none; border-radius:8px; cursor:pointer; font-weight:bold;">دخول</button>
+            <button onclick="login()" style="width:100%; padding:14px; background:var(--primary-color); color:white; border:none; border-radius:8px; cursor:pointer; font-weight:bold; font-size:16px;">دخول</button>
         </div>
     </div>
 
     <div id="appContainer" style="display:none;">
         <header>
-            <div id="userName"><i class="fa fa-user-circle"></i> <span id="uDisp"></span></div>
+            <div id="userInfo"><i class="fa fa-user-circle"></i> <span id="uDisp"></span></div>
             <img src="https://upload.wikimedia.org/wikipedia/ar/thumb/0/03/Nahdi_Logo.svg/1200px-Nahdi_Logo.svg.png" class="logo-center">
             <button onclick="logout()" style="background:var(--danger-color); color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer;">خروج</button>
         </header>
 
-        <div class="erp-container">
+        <div class="erp-wrapper">
             <aside class="sidebar">
                 <div class="nav-item active" onclick="nav('dash')"><i class="fa fa-tachometer-alt"></i> لوحة التحكم</div>
                 <div class="nav-item" onclick="nav('po')"><i class="fa fa-shopping-cart"></i> طلب شراء</div>
                 <div class="nav-item" onclick="nav('mgmt')"><i class="fa fa-tasks"></i> إدارة الطلبات</div>
-                <div id="navSettings" class="nav-item" onclick="nav('set')"><i class="fa fa-tools"></i> الإعدادات</div>
+                <div id="navAdmin" class="nav-item" onclick="nav('set')"><i class="fa fa-cog"></i> الإعدادات</div>
             </aside>
 
-            <main class="main-view">
+            <main class="main-content">
                 <section id="sec-dash">
-                    <h2>الإحصائيات الذكية</h2>
-                    <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:15px; margin-bottom:25px;">
-                        <div style="background:white; padding:20px; border-radius:10px; border-right:5px solid var(--primary-color);">اليوم<h3 id="st1">25</h3></div>
-                        <div style="background:white; padding:20px; border-radius:10px; border-right:5px solid var(--success-color);">الأسبوع الماضي<h3 id="st2">140</h3></div>
-                        <div style="background:white; padding:20px; border-radius:10px; border-right:5px solid var(--warning-color);">الشهر الماضي<h3 id="st3">580</h3></div>
-                        <div style="background:white; padding:20px; border-radius:10px;">وقت مخصص<br><input type="date" style="font-size:10px"> إلى <input type="date" style="font-size:10px"></div>
+                    <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:20px; margin-bottom:30px;">
+                        <div style="background:white; padding:25px; border-radius:15px; border-right:6px solid var(--primary-color); box-shadow:0 4px 6px rgba(0,0,0,0.02);">اليوم<h2 id="c1">25</h2></div>
+                        <div style="background:white; padding:25px; border-radius:15px; border-right:6px solid var(--success-color); box-shadow:0 4px 6px rgba(0,0,0,0.02);">الأسبوع<h2 id="c2">140</h2></div>
+                        <div style="background:white; padding:25px; border-radius:15px; border-right:6px solid var(--warning-color); box-shadow:0 4px 6px rgba(0,0,0,0.02);">الشهر<h2 id="c3">580</h2></div>
                     </div>
-                    <div style="display:flex; gap:20px;">
-                        <div style="flex:2; background:white; padding:20px; border-radius:10px;"><canvas id="lineChart"></canvas></div>
-                        <div style="flex:1; background:white; padding:20px; border-radius:10px;"><canvas id="pieChart"></canvas></div>
+                    <div style="display:flex; gap:20px; height: 350px;">
+                        <div style="flex:2; background:white; padding:20px; border-radius:15px;"><canvas id="lineChart"></canvas></div>
+                        <div style="flex:1; background:white; padding:20px; border-radius:15px;"><canvas id="pieChart"></canvas></div>
                     </div>
                 </section>
 
                 <section id="sec-po" style="display:none;">
-                    <h2>إنشاء طلب شراء جديد</h2>
-                    <div style="background:white; padding:20px; border-radius:15px; margin-bottom:20px; display:flex; flex-wrap:wrap; gap:15px;">
-                        <div>الجهة: <select id="dept" onchange="autoFillHeader()" style="padding:8px;"></select></div>
-                        <div>مقدم الطلب: <input type="text" id="at1" readonly style="background:#eee; border:none; padding:8px;"></div>
-                        <div>الوظيفة: <input type="text" id="at2" readonly style="background:#eee; border:none; padding:8px;"></div>
-                        <div>التوقيت: <input type="text" id="at3" readonly style="background:#eee; border:none; padding:8px;"></div>
+                    <h2>طلب شراء (أتمتة الجهات)</h2>
+                    <div style="background:white; padding:20px; border-radius:15px; margin:20px 0; display:flex; flex-wrap:wrap; gap:15px;">
+                        <div>الجهة: <select id="deptList" onchange="autoFillHeader()" style="padding:8px; border-radius:5px; border:1px solid #ddd;"></select></div>
+                        <div>المسؤول: <input type="text" id="hUser" readonly style="background:#f0f0f0; border:none; padding:8px; border-radius:5px;"></div>
+                        <div>الوقت: <input type="text" id="hTime" readonly style="background:#f0f0f0; border:none; padding:8px; border-radius:5px;"></div>
                     </div>
 
-                    <div class="no-print" style="margin-bottom:15px; display:flex; gap:10px;">
-                        <button onclick="addRow()" style="background:var(--success-color); color:white; border:none; padding:10px 20px; border-radius:5px; cursor:pointer;"><i class="fa fa-plus"></i> إضافة صنف</button>
-                        <button onclick="exportExcel()" style="background:var(--secondary-color); color:white; border:none; padding:10px 20px; border-radius:5px; cursor:pointer;"><i class="fa fa-file-excel"></i> تصدير Excel</button>
-                        <button onclick="window.print()" style="background:#6c757d; color:white; border:none; padding:10px 20px; border-radius:5px; cursor:pointer;"><i class="fa fa-print"></i> طباعة منسقة</button>
+                    <div class="no-print" style="margin-bottom:20px;">
+                        <button onclick="addRow()" style="background:var(--success-color); color:white; border:none; padding:12px 25px; border-radius:8px; cursor:pointer;"><i class="fa fa-plus"></i> إضافة صنف</button>
+                        <button onclick="exportToExcel()" style="background:var(--secondary-color); color:white; border:none; padding:12px 25px; border-radius:8px; cursor:pointer; margin-right:10px;"><i class="fa fa-file-excel"></i> تصدير إكسل</button>
                     </div>
 
                     <table class="erp-table" id="poTable">
@@ -160,12 +192,12 @@
                                 <th>المقاس (W/H/R)</th>
                                 <th class="cost-col">التكلفة</th>
                                 <th class="no-print">تحريك</th>
-                                <th class="no-print">حذف</th>
+                                <th class="no-print">إجراء</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
                     </table>
-                    <div id="authBtns" class="auth-actions-bar"></div>
+                    <div id="authActions" class="auth-actions-bar"></div>
                 </section>
                 
                 <div class="dev-credit">Developed By: Mohamed Ramadan 2026</div>
@@ -174,40 +206,43 @@
     </div>
 
     <script>
-        /* =========================================
-           أضخم ملف JS متكامل مع حل مشكلة الدخول
-           ========================================= */
+        /* =================================================================
+           2. أضخم ملف JavaScript (Logic & Auth Fix)
+           ================================================================= */
         
-        // بيانات الدخول التي طلبتها
-        const ADMIN_USER = "admin";
-        const ADMIN_PASS = "@Mm123321";
+        // بيانات الدخول المصلحة كما طلبت
+        const MASTER_USER = "admin";
+        const MASTER_PASS = "@Mm123321";
 
-        let users = JSON.parse(localStorage.getItem('erp_users')) || [
-            { u: ADMIN_USER, p: ADMIN_PASS, j: 'المدير العام', perms: ['admin','review','edit','cost','stop','approve','delete'] }
+        const users = [
+            { u: MASTER_USER, p: MASTER_PASS, j: "المدير العام", perms: ['admin','review','edit','cost','stop','approve','delete'] }
         ];
+
         let currentUser = null;
         const depts = ["المشتريات", "الشركات", "الاستيراد", "الجملة", ...Array.from({length: 21}, (_, i) => `فرع النهدي ${i + 1}`)];
 
-        // فحص الجلسة عند التحميل
+        // تشغيل النظام
         window.onload = () => {
-            const ds = document.getElementById('dept');
-            depts.forEach(d => { let o = document.createElement('option'); o.text = d; ds.add(o); });
+            const dl = document.getElementById('deptList');
+            depts.forEach(d => { let o = document.createElement('option'); o.text = d; dl.add(o); });
             
-            let session = localStorage.getItem('loggedUser');
-            if(session) { currentUser = JSON.parse(session); launchApp(); }
+            if(localStorage.getItem('erp_session')) {
+                currentUser = JSON.parse(localStorage.getItem('erp_session'));
+                launchApp();
+            }
         };
 
-        // وظيفة تسجيل الدخول مع حل المشكلة
+        // دالة الدخول (الإصلاح الجذري)
         function login() {
-            let u = document.getElementById('userInput').value;
-            let p = document.getElementById('passInput').value;
+            const u = document.getElementById('userInput').value;
+            const p = document.getElementById('passInput').value;
 
-            if(u === ADMIN_USER && p === ADMIN_PASS) {
-                currentUser = users.find(x => x.u === ADMIN_USER);
-                localStorage.setItem('loggedUser', JSON.stringify(currentUser));
+            if(u === MASTER_USER && p === MASTER_PASS) {
+                currentUser = users[0];
+                localStorage.setItem('erp_session', JSON.stringify(currentUser));
                 launchApp();
             } else {
-                alert("بيانات الدخول admin و @Mm123321 غير صحيحة!");
+                alert("خطأ! تأكد من اسم المستخدم admin وكلمة المرور @Mm123321");
             }
         }
 
@@ -215,41 +250,38 @@
             document.getElementById('loginPage').style.display = 'none';
             document.getElementById('appContainer').style.display = 'block';
             document.getElementById('uDisp').innerText = currentUser.u;
-            document.getElementById('navSettings').style.display = currentUser.perms.includes('admin') ? 'flex' : 'none';
+            document.getElementById('navAdmin').style.display = currentUser.perms.includes('admin') ? 'flex' : 'none';
             initCharts();
             nav('dash');
         }
 
-        // إخفاء/إظهار كلمة المرور
+        // إخفاء وإظهار كلمة المرور
         document.getElementById('toggleEye').onclick = function() {
-            let p = document.getElementById('passInput');
+            const p = document.getElementById('passInput');
             p.type = p.type === "password" ? "text" : "password";
             this.classList.toggle('fa-eye-slash');
         };
 
-        // التنقل بين الأقسام
+        // التنقل بين الشاشات
         function nav(id) {
             document.querySelectorAll('section').forEach(s => s.style.display = 'none');
             document.getElementById('sec-' + id).style.display = 'block';
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-            if(id === 'po') renderAuth();
+            if(id === 'po') renderPermissions();
         }
 
-        // أتمتة الهيدر
         function autoFillHeader() {
-            document.getElementById('at1').value = currentUser.u;
-            document.getElementById('at2').value = currentUser.j;
-            document.getElementById('at3').value = new Date().toLocaleString('ar-EG');
+            document.getElementById('hUser').value = currentUser.u;
+            document.getElementById('hTime').value = new Date().toLocaleString('ar-EG');
         }
 
-        // إضافة صف ببياناته الثلاثية
+        // إدارة الجدول
         function addRow() {
-            let tbody = document.querySelector('#poTable tbody');
-            let row = tbody.insertRow();
-            let canEdit = currentUser.perms.includes('edit');
+            const tbody = document.querySelector('#poTable tbody');
+            const row = tbody.insertRow();
             row.innerHTML = `
                 <td>${tbody.rows.length}</td>
-                <td><input type="text" ${!canEdit?'disabled':''} style="width:100px"></td>
+                <td><input type="text" style="width:100%; padding:5px; border:1px solid #ddd; border-radius:4px;"></td>
                 <td>
                     <div class="size-group">
                         <input type="text" placeholder="W">
@@ -257,55 +289,65 @@
                         <input type="text" placeholder="R">
                     </div>
                 </td>
-                <td class="cost-col"><input type="number" style="width:80px"></td>
+                <td class="cost-col"><input type="number" style="width:80px; padding:5px;"></td>
                 <td class="no-print">
-                    <button onclick="move(this,-1)" style="cursor:pointer">↑</button>
-                    <button onclick="move(this,1)" style="cursor:pointer">↓</button>
+                    <button onclick="moveRow(this, -1)" style="padding:2px 8px; cursor:pointer;">↑</button>
+                    <button onclick="moveRow(this, 1)" style="padding:2px 8px; cursor:pointer;">↓</button>
                 </td>
-                <td class="no-print"><button onclick="this.parentElement.parentElement.remove()" style="color:red; cursor:pointer;"><i class="fa fa-trash"></i></button></td>
+                <td class="no-print">
+                    <button onclick="this.parentElement.parentElement.remove()" style="color:red; border:none; background:none; cursor:pointer;"><i class="fa fa-trash"></i></button>
+                </td>
             `;
-            renderAuth();
+            renderPermissions();
         }
 
-        // تحريك الصفوف (أعلى/أسفل)
-        function move(btn, dir) {
-            let row = btn.closest('tr');
-            if(dir === -1 && row.previousElementSibling) row.parentNode.insertBefore(row, row.previousElementSibling);
-            if(dir === 1 && row.nextElementSibling) row.parentNode.insertBefore(row.nextElementSibling, row);
+        function moveRow(btn, direction) {
+            const row = btn.closest('tr');
+            if(direction === -1 && row.previousElementSibling) row.parentNode.insertBefore(row, row.previousElementSibling);
+            if(direction === 1 && row.nextElementSibling) row.parentNode.insertBefore(row.nextElementSibling, row);
         }
 
-        // تفعيل الصلاحيات الست ديناميكياً
-        function renderAuth() {
-            let bar = document.getElementById('authBtns');
+        // نظام الصلاحيات الست
+        function renderPermissions() {
+            const bar = document.getElementById('authActions');
             bar.innerHTML = "";
-            let map = { 
+            const config = {
                 'review': {t:'مراجعة', c:'#17a2b8', i:'eye'},
                 'edit': {t:'تعديل', c:'#ffc107', i:'edit'},
-                'stop': {t:'إيقاف/تعليق', c:'#343a40', i:'pause'},
+                'stop': {t:'إيقاف', c:'#343a40', i:'pause'},
                 'approve': {t:'اعتماد', c:'#28a745', i:'check'},
                 'delete': {t:'حذف', c:'#dc3545', i:'trash'}
             };
+
             currentUser.perms.forEach(p => {
-                if(map[p]) {
-                    bar.innerHTML += `<button class="btn-auth" style="background:${map[p].c}"><i class="fa fa-${map[p].i}"></i> ${map[p].t}</button>`;
+                if(config[p]) {
+                    bar.innerHTML += `<button class="btn-auth" style="background:${config[p].c}"><i class="fa fa-${config[p].i}"></i> ${config[p].t}</button>`;
                 }
             });
-            // إظهار/إخفاء التكلفة بناءً على الصلاحية
-            document.querySelectorAll('.cost-col').forEach(c => c.style.display = currentUser.perms.includes('cost')?'table-cell':'none');
+
+            // إخفاء عمود التكلفة إذا لم توجد صلاحية
+            const canSeeCost = currentUser.perms.includes('cost') || currentUser.perms.includes('admin');
+            document.querySelectorAll('.cost-col').forEach(c => c.style.display = canSeeCost ? 'table-cell' : 'none');
         }
 
-        // الرسوم البيانية
+        // الرسوم البيانية والإكسل
         function initCharts() {
-            new Chart(document.getElementById('lineChart'), { type: 'line', data: { labels: ['الأحد','الاثنين','الثلاثاء','الأربعاء'], datasets: [{label:'الطلبات', data:[12,19,10,15], borderColor:'#004a99'}] }});
-            new Chart(document.getElementById('pieChart'), { type: 'pie', data: { labels: ['فروع','مشتريات','استيراد'], datasets: [{data:[60,25,15], backgroundColor:['#004a99','#28a745','#ffc107']}] }});
+            new Chart(document.getElementById('lineChart'), {
+                type: 'line',
+                data: { labels: ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس'], datasets: [{label:'الطلبات', data:[12,19,15,22,30], borderColor:'#004a99', tension:0.4}] }
+            });
+            new Chart(document.getElementById('pieChart'), {
+                type: 'doughnut',
+                data: { labels: ['فروع','جملة','أخرى'], datasets: [{data:[65,25,10], backgroundColor:['#004a99','#28a745','#ffc107']}] }
+            });
         }
 
-        function exportExcel() {
-            let wb = XLSX.utils.table_to_book(document.getElementById('poTable'));
-            XLSX.writeFile(wb, "Nahdi_PO_2026.xlsx");
+        function exportToExcel() {
+            const wb = XLSX.utils.table_to_book(document.getElementById('poTable'));
+            XLSX.writeFile(wb, "Nahdi_ERP_Order.xlsx");
         }
 
-        function logout() { localStorage.removeItem('loggedUser'); location.reload(); }
+        function logout() { localStorage.removeItem('erp_session'); location.reload(); }
     </script>
 </body>
 </html>
