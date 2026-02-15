@@ -2,138 +2,169 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>YN-ERP Nahdi 2026</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YN-ERP | النهدي 2026</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <link rel="stylesheet" href="style.css">
+    
+    <style>
+        /* --- الضبط المتقدم (Master CSS) --- */
+        :root {
+            --primary-color: #004a99;
+            --sidebar-color: #2c3e50;
+            --bg-color: #f4f7fa;
+            --font-size: 14px;
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            font-size: var(--font-size);
+            background: var(--bg-color);
+            margin: 0; overflow-x: hidden;
+        }
+
+        /* شاشة الدخول الاحترافية (تصحيح الصورة) */
+        #loginPage {
+            position: fixed; inset: 0; z-index: 9999;
+            background: linear-gradient(135deg, var(--primary-color) 0%, #002a55 100%);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .login-card {
+            background: white; width: 400px; padding: 40px; border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3); text-align: center;
+        }
+        .login-card input {
+            width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px;
+        }
+        .pass-group { position: relative; }
+        .pass-group i { position: absolute; left: 12px; top: 22px; cursor: pointer; color: #666; }
+
+        /* الهيدر واللوجو */
+        header {
+            background: white; height: 65px; display: flex; align-items: center;
+            justify-content: space-between; padding: 0 25px; border-bottom: 3px solid var(--primary-color);
+            position: sticky; top: 0; z-index: 1000;
+        }
+        .logo-center { position: absolute; left: 50%; transform: translateX(-50%); height: 45px; }
+
+        /* التقسيم الرئيسي */
+        .erp-container { display: flex; min-height: calc(100vh - 65px); }
+        .sidebar {
+            width: 260px; background: var(--sidebar-color); color: white;
+            transition: var(--transition); display: flex; flex-direction: column;
+        }
+        .nav-item {
+            padding: 18px 25px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex; align-items: center; gap: 12px; transition: 0.3s;
+        }
+        .nav-item:hover, .nav-item.active { background: var(--primary-color); padding-right: 35px; }
+
+        .main-view { flex: 1; padding: 30px; position: relative; }
+
+        /* الجداول (طلب الشراء) */
+        .erp-table {
+            width: 100%; border-collapse: collapse; background: white;
+            border-radius: 10px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        .erp-table th { background: #f8f9fa; padding: 15px; border-bottom: 2px solid #dee2e6; color: #333; }
+        .erp-table td { padding: 12px; border-bottom: 1px solid #eee; text-align: center; }
+        
+        /* أزرار الصلاحيات الست (أسفل اليمين) */
+        .auth-actions-bar {
+            position: fixed; bottom: 30px; right: 290px;
+            background: white; padding: 12px 25px; border-radius: 50px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.2); display: flex; gap: 12px; border: 1px solid var(--primary-color);
+        }
+        .btn-auth { border: none; padding: 10px 18px; border-radius: 25px; cursor: pointer; font-weight: bold; color: white; }
+
+        /* التذييل */
+        .dev-credit { position: fixed; bottom: 10px; right: 20px; font-size: 11px; color: #777; font-weight: bold; z-index: 1001; }
+
+        /* الرسوم البيانية */
+        .chart-box { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+
+        @media print {
+            .sidebar, header, .auth-actions-bar, button, .no-print { display: none !important; }
+            .main-view { padding: 0; width: 100%; }
+            .erp-table { border: 1px solid #000; }
+        }
+    </style>
 </head>
 <body>
 
     <div id="loginPage">
         <div class="login-card">
-            <img src="https://upload.wikimedia.org/wikipedia/ar/thumb/0/03/Nahdi_Logo.svg/1200px-Nahdi_Logo.svg.png" width="160">
-            <h2 style="color:var(--primary-color); margin-top:20px;">دخول النظام الآمن</h2>
-            <input type="text" id="userIn" placeholder="اسم المستخدم" style="width:100%; padding:12px; margin-bottom:10px; border:1px solid #ddd; border-radius:5px;">
+            <img src="https://upload.wikimedia.org/wikipedia/ar/thumb/0/03/Nahdi_Logo.svg/1200px-Nahdi_Logo.svg.png" width="150">
+            <h2 style="color:var(--primary-color); margin-top:15px;">دخول النظام الآمن</h2>
+            <input type="text" id="userInput" placeholder="اسم المستخدم">
             <div class="pass-group">
-                <input type="password" id="passIn" placeholder="كلمة المرور" style="width:100%; padding:12px; border:1px solid #ddd; border-radius:5px;">
-                <i class="fa fa-eye" id="togglePass"></i>
+                <input type="password" id="passInput" placeholder="كلمة المرور">
+                <i class="fa fa-eye" onclick="togglePass()"></i>
             </div>
-            <button onclick="login()" style="width:100%; padding:12px; background:var(--primary-color); color:white; border:none; border-radius:5px; cursor:pointer; font-weight:bold;">تسجيل الدخول</button>
+            <button onclick="login()" style="width:100%; padding:12px; background:var(--primary-color); color:white; border:none; border-radius:8px; cursor:pointer;">دخول</button>
         </div>
     </div>
 
     <div id="appContainer" style="display:none;">
         <header>
-            <div id="userProfile"><i class="fa fa-user-circle"></i> <span id="currentUserNameDisplay"></span></div>
+            <div id="userName"><i class="fa fa-user-circle"></i> <span id="uDisp"></span></div>
             <img src="https://upload.wikimedia.org/wikipedia/ar/thumb/0/03/Nahdi_Logo.svg/1200px-Nahdi_Logo.svg.png" class="logo-center">
             <button onclick="logout()" style="background:#dc3545; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer;">خروج</button>
         </header>
 
-        <div class="erp-wrapper">
+        <div class="erp-container">
             <aside class="sidebar">
-                <div class="nav-item active" onclick="showSec('dash')"><i class="fa fa-chart-line"></i> لوحة التحكم</div>
-                <div class="nav-item" onclick="showSec('po')"><i class="fa fa-cart-plus"></i> طلب شراء</div>
-                <div id="menuOrderMgmt" class="nav-item" onclick="showSec('mgmt')"><i class="fa fa-tasks"></i> إدارة الطلبات</div>
-                <div id="menuSettings" class="nav-item" onclick="showSec('settings')"><i class="fa fa-tools"></i> الإعدادات</div>
+                <div class="nav-item active" onclick="nav('dash')"><i class="fa fa-tachometer-alt"></i> لوحة التحكم</div>
+                <div class="nav-item" onclick="nav('po')"><i class="fa fa-shopping-cart"></i> طلب شراء</div>
+                <div id="navMgmt" class="nav-item" onclick="nav('mgmt')"><i class="fa fa-tasks"></i> إدارة الطلبات</div>
+                <div id="navSet" class="nav-item" onclick="nav('set')"><i class="fa fa-cog"></i> الإعدادات</div>
             </aside>
 
-            <main class="main-content">
-                <section id="sec-dash" class="section-view">
-                    <h2><i class="fa fa-dashboard"></i> الإحصائيات الذكية</h2>
+            <main class="main-view">
+                <section id="sec-dash">
                     <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:20px; margin-bottom:30px;">
-                        <div class="login-card" style="padding:20px; width:auto;">اليوم<h3 id="statToday">0</h3></div>
-                        <div class="login-card" style="padding:20px; width:auto;">الأسبوع الماضي<h3 id="statWeek">0</h3></div>
-                        <div class="login-card" style="padding:20px; width:auto;">الشهر الماضي<h3 id="statMonth">0</h3></div>
-                        <div class="login-card" style="padding:20px; width:auto;">وقت مخصص<br><input type="date" id="dateFrom"> إلى <input type="date" id="dateTo"></div>
+                        <div class="chart-box">اليوم<h2 id="s1">0</h2></div>
+                        <div class="chart-box">الأسبوع الماضي<h2 id="s2">0</h2></div>
+                        <div class="chart-box">الشهر الماضي<h2 id="s3">0</h2></div>
+                        <div class="chart-box">وقت مخصص<br><input type="date" id="d1"> إلى <input type="date" id="d2"></div>
                     </div>
                     <div style="display:flex; flex-wrap:wrap; gap:20px;">
-                        <div style="flex:2; background:white; padding:20px; border-radius:10px;"><canvas id="lineChart"></canvas></div>
-                        <div style="flex:1; background:white; padding:20px; border-radius:10px;"><canvas id="pieChart"></canvas></div>
+                        <div class="chart-box" style="flex:2;"><canvas id="lineChart"></canvas></div>
+                        <div class="chart-box" style="flex:1;"><canvas id="pieChart"></canvas></div>
                     </div>
                 </section>
 
-                <section id="sec-po" class="section-view" style="display:none;">
-                    <h2>إنشاء طلب شراء جديد</h2>
-                    <div style="background:white; padding:20px; border-radius:10px; margin-bottom:20px; display:flex; flex-wrap:wrap; gap:15px;">
-                        <div>القسم / الفرع: <select id="deptSelect" onchange="autoFillHeader()" style="padding:8px;"></select></div>
-                        <div>اسم مقدم الطلب: <input type="text" id="autoUser" readonly style="background:#eee; padding:8px;"></div>
-                        <div>الوظيفة: <input type="text" id="autoJob" readonly style="background:#eee; padding:8px;"></div>
-                        <div>التوقيت: <input type="text" id="autoTime" readonly style="background:#eee; padding:8px;"></div>
+                <section id="sec-po" style="display:none;">
+                    <h2>إنشاء طلب شراء (25 جهة)</h2>
+                    <div style="background:white; padding:20px; border-radius:12px; margin-bottom:20px; display:flex; flex-wrap:wrap; gap:15px;">
+                        <div>القسم: <select id="dept" onchange="autoFill()" style="padding:8px;"></select></div>
+                        <div>مقدم الطلب: <input type="text" id="a1" readonly style="background:#eee;"></div>
+                        <div>الوظيفة: <input type="text" id="a2" readonly style="background:#eee;"></div>
+                        <div>التوقيت: <input type="text" id="a3" readonly style="background:#eee;"></div>
                     </div>
-
-                    <div class="no-print" style="margin-bottom:15px; display:flex; gap:10px;">
-                        <button onclick="addRow()" style="background:#28a745; color:white; border:none; padding:10px 20px; border-radius:5px; cursor:pointer;"><i class="fa fa-plus"></i> إضافة بند</button>
-                        <button onclick="document.getElementById('importFile').click()" style="background:#ffc107; border:none; padding:10px 20px; border-radius:5px; cursor:pointer;"><i class="fa fa-file-import"></i> استيراد Excel</button>
-                        <input type="file" id="importFile" style="display:none;" onchange="importExcel(this)">
-                        <button onclick="exportExcel()" style="background:#17a2b8; color:white; border:none; padding:10px 20px; border-radius:5px; cursor:pointer;"><i class="fa fa-file-export"></i> تصدير Excel</button>
-                        <button onclick="window.print()" style="background:#6c757d; color:white; border:none; padding:10px 20px; border-radius:5px; cursor:pointer;"><i class="fa fa-print"></i> طباعة منسقة</button>
+                    
+                    <div class="no-print" style="margin-bottom:15px;">
+                        <button onclick="addRow()" style="background:#28a745; color:white; border:none; padding:10px 20px; border-radius:5px; cursor:pointer;">+ إضافة صنف</button>
+                        <button onclick="exportXL()" style="background:#17a2b8; color:white; border:none; padding:10px 20px; border-radius:5px; cursor:pointer;">تصدير Excel</button>
+                        <button onclick="window.print()" style="background:#6c757d; color:white; border:none; padding:10px 20px; border-radius:5px; cursor:pointer;">طباعة</button>
                     </div>
 
                     <table class="erp-table" id="poTable">
                         <thead>
                             <tr>
-                                <th>رقم</th>
+                                <th>#</th>
                                 <th>البراند</th>
-                                <th>المقاس (W / H / R)</th>
+                                <th>المقاس (W/H/R)</th>
                                 <th class="cost-col">التكلفة</th>
                                 <th class="no-print">تحريك</th>
-                                <th class="no-print">حذف</th>
+                                <th class="no-print">إجراء</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
                     </table>
-
-                    <div id="dynamicAuthBtns" class="auth-actions-bar"></div>
-                </section>
-
-                <section id="sec-mgmt" class="section-view" style="display:none;">
-                    <h2>قائمة إدارة الطلبات (البت والقرار)</h2>
-                    <table class="erp-table" id="mgmtTable">
-                        <thead>
-                            <tr>
-                                <th>كود الطلب</th>
-                                <th>الفرع/القسم</th>
-                                <th>بواسطة</th>
-                                <th>الحالة</th>
-                                <th>ملاحظات</th>
-                                <th>إجراءات القرار</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </section>
-
-                <section id="sec-settings" class="section-view" style="display:none;">
-                    <h2>إعدادات النظام والمستخدمين</h2>
-                    <div style="background:white; padding:20px; border-radius:10px; margin-bottom:20px;">
-                        <h3>تخصيص المظهر</h3>
-                        اللون الرئيسي: <input type="color" id="setThemeColor" onchange="applyTheme()">
-                        حجم الخط: <input type="number" id="setFontSize" value="14" onchange="applyTheme()">
-                    </div>
-                    <div style="background:white; padding:20px; border-radius:10px;">
-                        <h3>إضافة مستخدم جديد</h3>
-                        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px; margin-bottom:15px;">
-                            <input type="text" id="newUname" placeholder="اسم المستخدم" style="padding:10px;">
-                            <input type="text" id="newPass" placeholder="كلمة المرور" style="padding:10px;">
-                            <input type="text" id="newJob" placeholder="الوظيفة" style="padding:10px;">
-                        </div>
-                        <h4>الصلاحيات الممنوحة:</h4>
-                        <div id="permsSelection" style="display:flex; flex-wrap:wrap; gap:15px; margin-bottom:15px;">
-                            <label><input type="checkbox" value="review"> مراجعة الطلب</label>
-                            <label><input type="checkbox" value="edit"> التعديل على الطلب</label>
-                            <label><input type="checkbox" value="cost"> إظهار التكلفة</label>
-                            <label><input type="checkbox" value="stop"> إيقاف/تعليق</label>
-                            <label><input type="checkbox" value="approve"> الموافقة</label>
-                            <label><input type="checkbox" value="delete"> حذف الطلب</label>
-                            <label><input type="checkbox" value="admin"> مدير نظام (Admin)</label>
-                        </div>
-                        <button onclick="addUser()" style="background:var(--primary-color); color:white; border:none; padding:10px 25px; border-radius:5px; cursor:pointer;">حفظ المستخدم</button>
-                        <table class="erp-table" style="margin-top:20px;" id="usersTable">
-                            <thead><tr><th>المستخدم</th><th>الوظيفة</th><th>الصلاحيات</th><th>إجراء</th></tr></thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
+                    <div id="authBtns" class="auth-actions-bar"></div>
                 </section>
 
                 <div class="dev-credit">Developed By: Mohamed Ramadan 2026</div>
@@ -141,6 +172,86 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        // --- البيانات والمنطق ---
+        let users = JSON.parse(localStorage.getItem('erp_users')) || [
+            { u: 'admin', p: '123', j: 'المدير', perms: ['admin','review','edit','cost','stop','approve','delete'] }
+        ];
+        let currentUser = null;
+        const depts = ["المشتريات", "الشركات", "الاستيراد", "الجملة", ...Array.from({length: 21}, (_, i) => `فرع النهدي ${i + 1}`)];
+
+        function togglePass() {
+            let p = document.getElementById('passInput');
+            p.type = p.type === "password" ? "text" : "password";
+        }
+
+        function login() {
+            let u = document.getElementById('userInput').value;
+            let p = document.getElementById('passInput').value;
+            let user = users.find(x => x.u === u && x.p === p);
+            if(user) {
+                currentUser = user;
+                localStorage.setItem('loggedUser', JSON.stringify(user));
+                startApp();
+            } else alert("خطأ!");
+        }
+
+        function startApp() {
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('appContainer').style.display = 'block';
+            document.getElementById('uDisp').innerText = currentUser.u;
+            
+            let ds = document.getElementById('dept');
+            depts.forEach(d => { let o = document.createElement('option'); o.text = d; ds.add(o); });
+            
+            initCharts();
+        }
+
+        function nav(id) {
+            document.querySelectorAll('section').forEach(s => s.style.display = 'none');
+            document.getElementById('sec-' + id).style.display = 'block';
+            if(id === 'po') renderAuth();
+        }
+
+        function autoFill() {
+            document.getElementById('a1').value = currentUser.u;
+            document.getElementById('a2').value = currentUser.j;
+            document.getElementById('a3').value = new Date().toLocaleString('ar-EG');
+        }
+
+        function addRow() {
+            let tbody = document.querySelector('#poTable tbody');
+            let row = tbody.insertRow();
+            let canEdit = currentUser.perms.includes('edit');
+            row.innerHTML = `
+                <td>${tbody.rows.length}</td>
+                <td><input type="text" ${!canEdit?'disabled':''}></td>
+                <td><input style="width:40px" placeholder="W"><input style="width:40px" placeholder="H"><input style="width:40px" placeholder="R"></td>
+                <td class="cost-col"><input type="number"></td>
+                <td class="no-print"><button onclick="move(this,-1)">↑</button><button onclick="move(this,1)">↓</button></td>
+                <td class="no-print"><button onclick="this.parentElement.parentElement.remove()">حذف</button></td>
+            `;
+            renderAuth();
+        }
+
+        function renderAuth() {
+            let bar = document.getElementById('authBtns');
+            bar.innerHTML = "";
+            let map = { 'review':'مراجعة', 'edit':'حفظ', 'stop':'إيقاف', 'approve':'موافقة', 'delete':'حذف' };
+            currentUser.perms.forEach(p => {
+                if(map[p]) {
+                    bar.innerHTML += `<button class="btn-auth" style="background:var(--primary-color)">${map[p]}</button>`;
+                }
+            });
+            document.querySelectorAll('.cost-col').forEach(c => c.style.display = currentUser.perms.includes('cost')?'table-cell':'none');
+        }
+
+        function initCharts() {
+            new Chart(document.getElementById('lineChart'), { type: 'line', data: { labels: ['S','M','T','W','T'], datasets: [{label:'الطلبات', data:[10,20,15,30,25], borderColor:'#004a99'}] }});
+            new Chart(document.getElementById('pieChart'), { type: 'pie', data: { labels: ['فروع','جملة','استيراد'], datasets: [{data:[50,30,20], backgroundColor:['#004a99','#28a745','#ffc107']}] }});
+        }
+
+        function logout() { localStorage.removeItem('loggedUser'); location.reload(); }
+    </script>
 </body>
 </html>
