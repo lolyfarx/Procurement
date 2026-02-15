@@ -1,164 +1,42 @@
-/* ========================================== */
-/* 1. التأسيس والمتغيرات الشاملة (Root)       */
-/* ========================================== */
 :root {
-    --main-blue: #004a99;       /* اللون الأساسي القابل للتغيير */
-    --main-orange: #f37021;     /* اللون الثانوي (لوجو النهدي) */
-    --erp-bg: #f0f4f8;          /* خلفية النظام */
-    --card-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    --main-blue: #004a99;
+    --main-orange: #f37021;
+    --erp-bg: #f0f4f8;
 }
 
-* {
-    box-sizing: border-box;
-    transition: all 0.2s ease-in-out; /* لتجربة مستخدم ناعمة */
-}
+body { font-family: 'Tajawal', sans-serif; background: var(--erp-bg); margin: 0; }
 
-body {
-    font-family: 'Tajawal', sans-serif;
-    background: var(--erp-bg);
-    margin: 0;
-    overflow-x: hidden;
-}
-
-/* ========================================== */
-/* 2. شاشة الترحيب (Splash Screen)          */
-/* ========================================== */
 #splash-screen {
     position: fixed; inset: 0; background: #fff; z-index: 10000;
-    display: flex; align-items: center; justify-content: center; transition: 0.6s;
+    display: flex; align-items: center; justify-content: center;
 }
 
 .logo-box-main {
-    width: 100px; height: 100px; background: var(--main-blue); color: #fff;
+    width: 80px; height: 80px; background: var(--main-blue); color: #fff;
     display: flex; align-items: center; justify-content: center;
-    font-size: 45px; font-weight: 800; border-radius: 20px;
-    border: 5px solid var(--main-orange); box-shadow: 0 10px 30px rgba(0,74,153,0.3);
+    font-size: 30px; font-weight: 800; border-radius: 15px;
+    border: 4px solid var(--main-orange);
 }
 
-.loader-wrapper { width: 220px; height: 6px; background: #eee; border-radius: 10px; overflow: hidden; }
-.loader-progress { height: 100%; background: var(--main-orange); width: 0; animation: load 2s forwards; }
-@keyframes load { to { width: 100%; } }
-
-/* ========================================== */
-/* 3. الهيدر (ERP Header)                   */
-/* ========================================== */
 .erp-header {
-    height: 65px; background: var(--main-blue); color: #fff;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0 20px; position: sticky; top: 0; z-index: 1000;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    height: 60px; background: var(--main-blue); color: #fff;
+    display: flex; align-items: center; justify-content: space-between; padding: 0 20px;
 }
 
-.logo-badge { 
-    background: #fff; color: var(--main-blue); 
-    padding: 2px 12px; border-radius: 8px; 
-    font-weight: 800; border: 2px solid var(--main-orange); 
-}
+.erp-sidebar { width: 250px; background: #fff; border-left: 1px solid #ddd; height: calc(100vh - 60px); }
 
-.company-full-name { font-weight: 700; font-size: 1.1rem; }
+.nav-item { display: block; padding: 15px 25px; color: #444; text-decoration: none; border-right: 4px solid transparent; }
+.nav-item.active { background: #f0f7ff; color: var(--main-blue); border-right-color: var(--main-orange); }
 
-.avatar {
-    width: 40px; height: 40px; background: var(--main-orange);
-    color: #fff; border-radius: 50%; display: flex;
-    align-items: center; justify-content: center; font-weight: bold;
-}
-
-/* ========================================== */
-/* 4. القائمة الجانبية (Sidebar)             */
-/* ========================================== */
-.erp-body { display: flex; min-height: calc(100vh - 65px); }
-
-.erp-sidebar {
-    width: 260px; background: #fff; border-left: 1px solid #ddd;
-    display: flex; flex-direction: column; justify-content: space-between;
-    transition: 0.3s ease; flex-shrink: 0;
-}
-
-.nav-item {
-    display: flex; align-items: center; padding: 15px 25px;
-    color: #444; text-decoration: none; border-right: 5px solid transparent;
-    font-weight: 500;
-}
-
-.nav-item i { margin-left: 15px; font-size: 1.2rem; }
-
-.nav-item.active { 
-    background: #f0f7ff; color: var(--main-blue); 
-    border-right-color: var(--main-orange); font-weight: 700; 
-}
-
-.nav-item:hover { background: #f8f9fa; color: var(--main-blue); }
-
-.menu-label { padding: 20px 25px 5px; font-size: 11px; color: #999; font-weight: 800; }
-
-.dev-credit { 
-    padding: 15px; font-size: 11px; color: #aaa; 
-    border-top: 1px solid #eee; text-align: center; font-style: italic; 
-}
-
-/* ========================================== */
-/* 5. لوحة التحكم (Dashboard UI)            */
-/* ========================================== */
-.stat-card {
-    background: #fff; padding: 20px; border-radius: 15px;
-    box-shadow: var(--card-shadow); border-top: 5px solid #ddd;
-    position: relative; overflow: hidden;
-}
-
-.stat-val { font-size: 24px; font-weight: 800; color: #333; margin-top: 5px; }
-.stat-label { font-size: 13px; color: #777; font-weight: 500; }
-
+.stat-card { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-top: 4px solid #ddd; }
+.stat-val { font-size: 22px; font-weight: 800; }
 .border-blue { border-top-color: var(--main-blue); }
 .border-orange { border-top-color: var(--main-orange); }
-.border-success { border-top-color: #10b981; }
-.border-info { border-top-color: #3b82f6; }
 
-/* ========================================== */
-/* 6. الجداول والنموذج (Tables & Inputs)    */
-/* ========================================== */
-.erp-content { flex-grow: 1; overflow-y: auto; }
+.dev-credit { padding: 15px; font-size: 10px; color: #999; text-align: center; }
+.border-right-blue { border-right: 5px solid var(--main-blue); }
 
-.erp-main-table thead {
-    background-color: var(--main-blue);
-    color: #fff;
-}
-
-.erp-main-table th { font-weight: 600; padding: 15px; border: none; }
-
-.form-select, .form-control {
-    border-radius: 8px; border: 1px solid #dce4ec;
-    padding: 10px;
-}
-
-.form-control:focus {
-    border-color: var(--main-blue);
-    box-shadow: 0 0 0 0.25rem rgba(0, 74, 153, 0.1);
-}
-
-/* تنسيق المقاسات W / H / R داخل الجدول */
-.text-center::placeholder { font-size: 10px; color: #ccc; }
-
-/* ========================================== */
-/* 7. الاستجابة (Responsive Design)         */
-/* ========================================== */
 @media (max-width: 991px) {
-    .erp-sidebar { 
-        position: fixed; right: -260px; z-index: 999; 
-        height: 100%; box-shadow: -10px 0 20px rgba(0,0,0,0.1); 
-    }
+    .erp-sidebar { position: fixed; right: -250px; z-index: 999; transition: 0.3s; }
     .erp-sidebar.active { right: 0; }
-    .company-full-name { font-size: 0.9rem; }
-}
-
-/* ========================================== */
-/* 8. نظام الطباعة الرسمي (Printing)        */
-/* ========================================== */
-@media print {
-    body * { visibility: hidden; }
-    #print-zone, #print-zone * { visibility: visible; }
-    #print-zone { 
-        position: absolute; left: 0; top: 0; width: 100%; 
-        padding: 30px; direction: rtl; 
-    }
-    .no-print { display: none; }
 }

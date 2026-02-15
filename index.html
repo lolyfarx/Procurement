@@ -4,12 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YN-ERP v2.0 | شركة النهدي التجارية</title>
-    
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;500;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
@@ -29,14 +27,14 @@
                 <button class="menu-toggle btn text-white me-2" onclick="toggleSidebar()"><i class="bi bi-list fs-3"></i></button>
                 <div class="header-logo-container">
                     <span class="logo-badge">YN</span>
-                    <span class="company-full-name ms-2">شركة ياسر يسلم النهدي التجارية</span>
+                    <span class="company-full-name ms-2 d-none d-md-inline">شركة ياسر يسلم النهدي التجارية</span>
                 </div>
             </div>
             <div class="header-right d-flex align-items-center">
                 <div class="user-profile d-flex align-items-center">
                     <div class="text-end me-3 d-none d-md-block">
                         <div id="display-user-name" class="fw-bold small">المدير العام</div>
-                        <span class="badge bg-success" style="font-size: 9px;">متصل الآن</span>
+                        <span class="badge bg-success" style="font-size: 9px;">متصل</span>
                     </div>
                     <div class="avatar">Y</div>
                 </div>
@@ -53,31 +51,37 @@
                         <a href="javascript:void(0)" class="nav-item" onclick="showTab('settings', this)"><i class="bi bi-sliders"></i> الإعدادات</a>
                     </nav>
                 </div>
-                <div class="dev-credit">
-                    Developed by: Mohamed Ramadan 2026
-                </div>
+                <div class="dev-credit">Developed by: Mohamed Ramadan 2026</div>
             </aside>
 
             <main class="erp-content">
                 <div class="container-fluid p-4">
-                    
                     <section id="tab-dashboard" class="tab-pane active">
-                        <div class="row g-3 mb-4 align-items-end">
-                            <div class="col-md-4">
-                                <label class="small fw-bold mb-2"><i class="bi bi-calendar3"></i> النطاق الزمني للتحليل</label>
-                                <select id="dash-period" class="form-select border-primary shadow-sm" onchange="refreshDashboard()">
-                                    <option value="today">اليوم</option>
-                                    <option value="week">أسبوع</option>
-                                    <option value="month" selected>شهر</option>
-                                    <option value="3months">3 أشهر</option>
-                                    <option value="6months">6 أشهر</option>
-                                    <option value="9months">9 أشهر</option>
-                                    <option value="year">سنة كاملة</option>
+                        <div class="row g-3 mb-4 align-items-end bg-white p-3 rounded shadow-sm border-right-blue">
+                            <div class="col-md-3">
+                                <label class="small fw-bold mb-2">النطاق الزمني</label>
+                                <select id="dash-period" class="form-select border-primary" onchange="toggleDateInputs()">
+                                    <option value="today">هذا اليوم</option>
+                                    <option value="month" selected>هذا الشهر</option>
+                                    <option value="year">هذه السنة</option>
+                                    <option value="custom">تخصيص وقت (فترة محددة)</option>
                                 </select>
                             </div>
-                            <div class="col-md-4">
-                                <label class="small fw-bold mb-2"><i class="bi bi-shop"></i> فلترة حسب الفرع</label>
-                                <select id="dash-branch-filter" class="form-select border-primary shadow-sm" onchange="refreshDashboard()">
+                            <div id="custom-date-container" class="col-md-6" style="display: none;">
+                                <div class="row g-2">
+                                    <div class="col-6">
+                                        <label class="small fw-bold mb-1">من تاريخ:</label>
+                                        <input type="date" id="date-from" class="form-control" onchange="refreshDashboard()">
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="small fw-bold mb-1">إلى تاريخ:</label>
+                                        <input type="date" id="date-to" class="form-control" onchange="refreshDashboard()">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="small fw-bold mb-2">الفرع / القسم</label>
+                                <select id="dash-branch-filter" class="form-select border-primary" onchange="refreshDashboard()">
                                     <option value="all">كل الفروع والأقسام</option>
                                 </select>
                             </div>
@@ -98,28 +102,24 @@
 
                     <section id="tab-order-entry" class="tab-pane" style="display:none;">
                         <div class="card border-0 shadow-sm p-4">
-                            <div class="d-flex justify-content-between align-items-center mb-4">
-                                <h5 class="fw-bold m-0 text-primary"><i class="bi bi-file-earmark-plus"></i> تحرير طلب شراء</h5>
+                            <div class="d-flex justify-content-between mb-4">
+                                <h5 class="fw-bold text-primary">تحرير طلب شراء</h5>
                                 <div class="d-flex gap-2">
-                                    <button class="btn btn-outline-dark btn-sm" onclick="printInvoice()"><i class="bi bi-printer"></i> طباعة</button>
-                                    <button class="btn btn-success btn-sm" onclick="document.getElementById('xlInput').click()"><i class="bi bi-file-excel"></i> استيراد</button>
+                                    <button class="btn btn-outline-dark btn-sm" onclick="printInvoice()"><i class="bi bi-printer"></i></button>
                                     <button class="btn btn-primary btn-sm" onclick="exportOrder()"><i class="bi bi-download"></i> تصدير</button>
-                                    <input type="file" id="xlInput" hidden accept=".xlsx" onchange="importOrder(event)">
                                 </div>
                             </div>
-                            
                             <div class="row g-3 mb-4 bg-light p-3 rounded">
-                                <div class="col-md-4"><label class="small fw-bold mb-1">جهة الطلب (الفروع)</label><select id="inp-dept" class="form-select"></select></div>
-                                <div class="col-md-4"><label class="small fw-bold mb-1">المسؤول</label><input type="text" id="inp-user" class="form-control" readonly></div>
-                                <div class="col-md-4"><label class="small fw-bold mb-1">التاريخ</label><input type="text" id="inp-date" class="form-control" readonly></div>
+                                <div class="col-md-4"><label class="small fw-bold">الفرع</label><select id="inp-dept" class="form-select"></select></div>
+                                <div class="col-md-4"><label class="small fw-bold">المسؤول</label><input type="text" id="inp-user" class="form-control" readonly></div>
+                                <div class="col-md-4"><label class="small fw-bold">التاريخ</label><input type="text" id="inp-date" class="form-control" readonly></div>
                             </div>
-
                             <div class="table-responsive">
-                                <table class="table table-hover erp-main-table align-middle">
+                                <table class="table erp-main-table align-middle">
                                     <thead class="table-dark">
                                         <tr>
                                             <th>البراند</th>
-                                            <th width="300">المقاس (W / H / R)</th>
+                                            <th width="250">المقاس (W/H/R)</th>
                                             <th width="100">الكمية</th>
                                             <th class="price-col">التكلفة</th>
                                             <th class="price-col">الإجمالي</th>
@@ -130,13 +130,11 @@
                                 </table>
                             </div>
                             <button class="btn btn-outline-primary btn-sm mb-4" onclick="createNewRow()">+ إضافة صنف</button>
-                            
-                            <div class="text-end mb-4 border-top pt-3">
-                                <h4 class="fw-bold">إجمالي القيمة: <span id="grand-total-val" class="text-primary">0.00</span> ر.س</h4>
-                                <div class="small text-muted">إجمالي عدد القطع: <span id="stat-count">0</span></div>
-                                <div id="stat-total" style="display:none;">0</div> </div>
-
-                            <button class="btn btn-primary w-100 p-3 fw-bold" onclick="sendToCloud()"><i class="bi bi-cloud-upload"></i> حفظ وإرسال البيانات</button>
+                            <div class="text-end mb-4">
+                                <h4 class="fw-bold">القيمة: <span id="grand-total-val" class="text-primary">0.00</span> ر.س</h4>
+                                <div class="small text-muted">القطع: <span id="stat-count">0</span></div>
+                            </div>
+                            <button class="btn btn-primary w-100 p-3 fw-bold" onclick="sendToCloud()">حفظ وإرسال الطلب</button>
                         </div>
                     </section>
 
@@ -144,25 +142,14 @@
                         <div class="row g-4">
                             <div class="col-md-6">
                                 <div class="card p-4 border-0 shadow-sm">
-                                    <h5 class="fw-bold border-bottom pb-2 mb-4">الملف الشخصي والأسعار</h5>
-                                    <label class="small fw-bold mb-1">اسم المستخدم</label>
+                                    <h5 class="fw-bold mb-4">الملف الشخصي</h5>
+                                    <label class="small fw-bold mb-1">الاسم</label>
                                     <input type="text" id="set-name" class="form-control mb-3">
-                                    
                                     <div class="form-check form-switch mb-3">
                                         <input class="form-check-input" type="checkbox" id="set-price-toggle" checked onchange="togglePriceDisplay()">
-                                        <label class="form-check-label fw-bold">عرض الأسعار والتكاليف</label>
+                                        <label class="form-check-label">إظهار الأسعار</label>
                                     </div>
-                                    <button class="btn btn-primary w-100" onclick="updateGlobalSettings()">حفظ التغييرات</button>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="card p-4 border-0 shadow-sm">
-                                    <h5 class="fw-bold border-bottom pb-2 mb-4">تخصيص المظهر</h5>
-                                    <label class="small fw-bold mb-1">لون النظام الرئيسي</label>
-                                    <input type="color" id="set-theme-color" class="form-control form-control-color w-100 mb-3" value="#004a99">
-                                    
-                                    <label class="small fw-bold mb-1">حجم خط الجداول (<span id="font-val">14</span>px)</label>
-                                    <input type="range" class="form-range" min="12" max="22" id="set-font-size" value="14" oninput="changeFontSize(this.value)">
+                                    <button class="btn btn-primary w-100" onclick="updateGlobalSettings()">حفظ</button>
                                 </div>
                             </div>
                         </div>
@@ -171,9 +158,7 @@
             </main>
         </div>
     </div>
-
     <div id="print-zone" class="d-none"></div>
-
     <script src="script.js"></script>
 </body>
 </html>
