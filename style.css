@@ -1,36 +1,65 @@
-:root {
-    --main-blue: #004a99;
-    --main-orange: #f37021;
-    --erp-bg: #f4f7fa;
+:root { 
+    --main-color: #004a99; 
+    --font-size: 14px; 
 }
 
-body { font-family: 'Tajawal', sans-serif; background: var(--erp-bg); margin: 0; direction: rtl; }
+body { 
+    font-family: 'Tajawal', sans-serif; 
+    background: #f8fafc; 
+    font-size: var(--font-size); 
+    direction: rtl; 
+}
 
-/* شاشة تسجيل الدخول */
-.login-overlay { position: fixed; inset: 0; background: var(--erp-bg); z-index: 20000; display: flex; align-items: center; justify-content: center; }
-.login-card { background: #fff; width: 400px; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); border-top: 8px solid var(--main-blue); }
+.erp-header { 
+    background: var(--main-color); 
+    height: 70px; 
+    padding: 0 30px; 
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between; 
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
+    position: sticky; top: 0; z-index: 1000;
+}
 
-/* الهيدر واللوجو */
-.erp-header { height: 70px; background: var(--main-blue); color: #fff; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; position: sticky; top: 0; z-index: 1000; }
-.header-center { position: absolute; left: 50%; transform: translateX(-50%); }
-.header-logo-img { height: 50px; object-fit: contain; }
+.erp-body { display: flex; min-height: calc(100vh - 70px); }
 
-.input-group .btn { border-color: #dee2e6; border-right: none; }
-.btn-logout-link { background: none; border: none; color: #ffcccc; font-size: 11px; font-weight: bold; text-decoration: underline; padding: 0; }
+.erp-sidebar { 
+    width: 280px; background: white; border-left: 1px solid #e2e8f0; transition: 0.3s; 
+}
 
-.erp-sidebar { width: 260px; background: #fff; border-left: 1px solid #ddd; display: flex; flex-direction: column; justify-content: space-between; transition: 0.3s; }
-.nav-item { display: flex; align-items: center; padding: 15px 25px; color: #444; text-decoration: none; border-right: 5px solid transparent; font-weight: 600; }
-.nav-item.active { background: #f0f7ff; color: var(--main-blue); border-right-color: var(--main-orange); }
+.nav-item { 
+    padding: 18px 25px; cursor: pointer; color: #64748b; font-weight: 700; 
+    display: flex; align-items: center; gap: 15px; border-right: 5px solid transparent; 
+}
 
-.stat-card { background: #fff; padding: 25px; border-radius: 18px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 6px solid #ddd; }
-.stat-val { font-size: 28px; font-weight: 800; }
-.border-blue { border-top-color: var(--main-blue); }
-.border-orange { border-top-color: var(--main-orange); }
+.nav-item:hover, .nav-item.active { 
+    background: #f1f5f9; color: var(--main-color); border-right-color: var(--main-color); 
+}
 
-#splash-screen { position: fixed; inset: 0; background: #fff; z-index: 10000; display: flex; align-items: center; justify-content: center; }
-.logo-box-main { width: 80px; height: 80px; background: var(--main-blue); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 800; border-radius: 15px; border: 4px solid var(--main-orange); }
+.erp-content { flex: 1; padding: 30px; }
 
-@media (max-width: 991px) {
-    .erp-sidebar { position: fixed; right: -260px; z-index: 9999; height: 100%; }
-    .erp-sidebar.active { right: 0; }
+.login-overlay { 
+    position: fixed; inset: 0; background: #f1f5f9; z-index: 10000; 
+    display: flex; align-items: center; justify-content: center; 
+}
+
+.login-card { 
+    background: white; width: 420px; padding: 40px; border-radius: 25px; 
+    box-shadow: 0 20px 50px rgba(0,0,0,0.1); text-align: center; 
+}
+
+.erp-table thead { background: #1e293b; color: white; }
+.erp-table input { text-align: center; border-radius: 6px; }
+
+.stat-card { 
+    background: white; padding: 25px; border-radius: 15px; 
+    border-right: 6px solid var(--main-color); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); 
+}
+
+.stat-val { font-size: 28px; font-weight: 800; color: var(--main-color); }
+
+@media print {
+    .erp-sidebar, .erp-header, .btn, .no-print { display: none !important; }
+    .erp-content { padding: 0; }
+    .card { border: 1px solid #ddd !important; box-shadow: none !important; }
 }

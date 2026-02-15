@@ -3,160 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YN-ERP v7.0 | شركة ياسر يسلم النهدي التجارية</title>
+    <title>نظام الياسر ERP | شركة النهدي</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;500;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        :root { 
-            --main-blue: #004a99; 
-            --main-orange: #f37021; 
-            --erp-bg: #f4f7fa; 
-            --card-shadow: 0 10px 30px rgba(0,0,0,0.08);
-        }
-        
-        body { font-family: 'Tajawal', sans-serif; background: var(--erp-bg); margin: 0; direction: rtl; }
-
-        /* شاشة تسجيل الدخول المتطورة */
-        .login-overlay { position: fixed; inset: 0; background: var(--erp-bg); z-index: 20000; display: flex; align-items: center; justify-content: center; }
-        .login-card { background: #fff; width: 440px; border-radius: 30px; box-shadow: 0 25px 60px rgba(0,0,0,0.15); border-top: 12px solid var(--main-blue); padding: 45px; text-align: center; }
-        
-        /* الهيدر */
-        .erp-header { height: 80px; background: var(--main-blue); color: #fff; display: flex; align-items: center; justify-content: space-between; padding: 0 30px; position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .header-center { position: absolute; left: 50%; transform: translateX(-50%); }
-        .header-logo-img { height: 60px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); }
-
-        /* الهيكل الجانبي والمحتوى */
-        .erp-body { display: flex; min-height: calc(100vh - 80px); }
-        .erp-sidebar { width: 280px; background: #fff; border-left: 1px solid #dee2e6; transition: all 0.3s ease; }
-        .erp-content { flex: 1; padding: 35px; overflow-y: auto; }
-
-        /* الأزرار والقوائم */
-        .nav-item { display: flex; align-items: center; padding: 18px 30px; color: #444; text-decoration: none; border-right: 6px solid transparent; font-weight: 700; cursor: pointer; transition: 0.3s; }
-        .nav-item:hover { background: #f0f7ff; color: var(--main-blue); }
-        .nav-item.active { background: #eff6ff; color: var(--main-blue); border-right-color: var(--main-orange); }
-
-        /* كروت الإحصائيات */
-        .stat-card { background: #fff; padding: 25px; border-radius: 20px; border-top: 6px solid var(--main-blue); box-shadow: var(--card-shadow); transition: 0.3s; }
-        .stat-card:hover { transform: translateY(-5px); }
-        .stat-val { font-size: 30px; font-weight: 800; color: var(--main-blue); }
-        .stat-label { color: #666; font-weight: 600; margin-top: 5px; }
-
-        /* جداول الطلبات */
-        .erp-table { border-radius: 15px; overflow: hidden; }
-        .erp-table thead { background: #343a40; color: #fff; }
-        .price-col { background-color: #f8fbff !important; font-weight: bold; color: var(--main-blue); }
-
-        .avatar { width: 48px; height: 48px; background: var(--main-orange); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #fff; font-size: 20px; }
-        
-        @media (max-width: 991px) { .erp-sidebar { display: none; } }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <div id="login-screen" class="login-overlay">
         <div class="login-card">
-            <img src="logo.png" alt="YN Logo" style="width: 160px; margin-bottom: 30px;">
-            <h3 class="fw-bold mb-4">بوابة الدخول الموحدة</h3>
-            <div class="text-start mb-3">
-                <label class="small fw-bold mb-2">اسم المستخدم</label>
-                <input type="text" id="user-login" class="form-control form-control-lg" placeholder="admin">
+            <img src="logo.png" alt="Logo" class="mb-4" style="width: 140px;">
+            <h3 class="fw-bold mb-4 text-primary">تسجيل الدخول</h3>
+            <div class="mb-3 text-start">
+                <label class="small fw-bold">اسم المستخدم</label>
+                <input type="text" id="user-login" class="form-control p-3">
             </div>
-            <div class="text-start mb-4">
-                <label class="small fw-bold mb-2">كلمة المرور</label>
-                <div class="input-group">
-                    <input type="password" id="pass-login" class="form-control form-control-lg" placeholder="******">
-                    <button class="btn btn-outline-secondary" type="button" onclick="togglePass('pass-login', this)"><i class="bi bi-eye"></i></button>
-                </div>
+            <div class="mb-4 text-start">
+                <label class="small fw-bold">كلمة المرور</label>
+                <input type="password" id="pass-login" class="form-control p-3">
             </div>
-            <button class="btn btn-primary w-100 p-3 fw-bold fs-5 shadow" onclick="handleLogin()">تسجيل الدخول</button>
-            <div id="login-error" class="text-danger small mt-3" style="display:none; background:#fee2e2; padding:15px; border-radius:12px; font-weight: 700;">❌ خطأ في اسم المستخدم أو كلمة المرور!</div>
+            <button class="btn btn-primary w-100 p-3 fw-bold" onclick="handleLogin()">دخول النظام</button>
+            <div id="login-error" class="alert alert-danger mt-3 py-2" style="display:none;">⚠️ خطأ في البيانات</div>
         </div>
     </div>
 
     <div id="app-container" style="display: none;">
         <header class="erp-header">
-            <div class="header-left">
-                <button class="btn text-white p-0" onclick="toggleSidebar()"><i class="bi bi-list fs-2"></i></button>
-                <span class="ms-3 fw-bold fs-5 d-none d-md-inline">نظام الياسر ERP</span>
+            <div class="d-flex align-items-center">
+                <button class="btn text-white me-3" onclick="toggleSidebar()"><i class="bi bi-list fs-2"></i></button>
+                <img src="logo.png" height="45">
             </div>
-            <div class="header-center"><img src="logo.png" alt="Logo" class="header-logo-img"></div>
-            <div class="header-right d-flex align-items-center">
-                <div class="text-end me-3">
-                    <div id="display-user-name" class="fw-bold">Admin</div>
-                    <button onclick="location.reload()" style="background:none; border:none; color:#ffcccc; font-size:12px; font-weight:bold; cursor:pointer; padding:0;">خروج</button>
-                </div>
-                <div class="avatar" id="user-avatar-initial">A</div>
+            <div class="text-white text-end">
+                <div id="nav-user-name" class="fw-bold">اسم الموظف</div>
+                <div id="nav-user-job" class="small opacity-75">الوظيفة</div>
             </div>
         </header>
 
         <div class="erp-body">
             <aside class="erp-sidebar" id="sidebar">
                 <nav class="mt-4">
-                    <div class="nav-item active" onclick="showTab('dashboard', this)"><i class="bi bi-speedometer2 me-3 fs-5"></i> لوحة التحكم</div>
-                    <div class="nav-item" onclick="showTab('orders', this)"><i class="bi bi-cart-plus me-3 fs-5"></i> تحرير طلب شراء</div>
-                    <div class="nav-item p-auth-users" onclick="showTab('settings', this)"><i class="bi bi-people me-3 fs-5"></i> إدارة المستخدمين</div>
+                    <div class="nav-item active" onclick="showTab('dash', this)"><i class="bi bi-pie-chart"></i> لوحة التحكم</div>
+                    <div class="nav-item" onclick="showTab('order', this)"><i class="bi bi-cart-plus"></i> طلب شراء</div>
+                    <div class="nav-item p-review-auth" onclick="showTab('review', this)"><i class="bi bi-shield-check"></i> مراجعة الطلبات</div>
+                    <div class="nav-item p-admin-auth" onclick="showTab('settings', this)"><i class="bi bi-gear"></i> الإعدادات والنظام</div>
                 </nav>
             </aside>
 
             <main class="erp-content">
-                <section id="tab-dashboard" class="tab-pane">
-                    <div class="row g-4 mb-5">
-                        <div class="col-md-4"><div class="stat-card"><div class="stat-val" id="dash-total">0</div><div class="stat-label">إجمالي التكاليف (ر.س)</div></div></div>
-                        <div class="col-md-4"><div class="stat-card" style="border-top-color: var(--main-orange);"><div class="stat-val" id="dash-count">0</div><div class="stat-label">عدد الطلبات الصادرة</div></div></div>
-                        <div class="col-md-4"><div class="stat-card" style="border-top-color: #10b981;"><div class="stat-val" id="dash-items">0</div><div class="stat-label">إجمالي عدد القطع</div></div></div>
+                <section id="tab-dash" class="tab-pane">
+                    <div class="d-flex justify-content-between mb-4 flex-wrap gap-2">
+                        <h4 class="fw-bold">إحصائيات الأداء</h4>
+                        <div class="d-flex gap-2">
+                            <input type="date" id="filter-from" class="form-control form-control-sm">
+                            <input type="date" id="filter-to" class="form-control form-control-sm">
+                            <button class="btn btn-dark btn-sm" onclick="filterStats()">تحديث</button>
+                        </div>
                     </div>
-                    <div class="card p-4 border-0 shadow-sm" style="min-height: 450px;">
-                        <h5 class="fw-bold mb-4 text-secondary">تحليل حركة الشراء الزمنية</h5>
-                        <canvas id="mainChart"></canvas>
+                    <div class="row g-3 mb-4" id="stats-grid">
+                        </div>
+                    <div class="row g-4">
+                        <div class="col-md-8"><div class="card p-3 shadow-sm"><canvas id="lineChart"></canvas></div></div>
+                        <div class="col-md-4"><div class="card p-3 shadow-sm"><canvas id="pieChart"></canvas></div></div>
                     </div>
                 </section>
 
-                <section id="tab-orders" class="tab-pane" style="display:none;">
-                    <div class="card p-4 border-0 shadow-sm">
-                        <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
-                            <h4 class="fw-bold text-primary m-0">طلب شراء كفرات / جنوط</h4>
-                            <button class="btn btn-outline-dark btn-sm" onclick="window.print()"><i class="bi bi-printer me-2"></i>طباعة الطلب</button>
+                <section id="tab-order" class="tab-pane" style="display:none;">
+                    <div class="card p-4 shadow border-0 rounded-4">
+                        <div class="d-flex justify-content-between mb-4">
+                            <h4 class="fw-bold text-primary">تحرير طلب شراء</h4>
+                            <div class="btn-group">
+                                <button class="btn btn-outline-success btn-sm" onclick="importExcel()"><i class="bi bi-file-excel"></i> استيراد</button>
+                                <button class="btn btn-outline-primary btn-sm" onclick="exportExcel()"><i class="bi bi-download"></i> تصدير</button>
+                                <button class="btn btn-outline-secondary btn-sm" onclick="window.print()"><i class="bi bi-printer"></i> طباعة</button>
+                            </div>
                         </div>
-                        <div class="row g-3 mb-4 bg-light p-4 rounded-4 shadow-sm">
-                            <div class="col-md-6"><label class="small fw-bold mb-2">الفرع / القسم الطالب</label><select id="inp-dept" class="form-select"></select></div>
-                            <div class="col-md-3"><label class="small fw-bold mb-2">المسؤول</label><input type="text" id="inp-user" class="form-control bg-white" readonly></div>
-                            <div class="col-md-3"><label class="small fw-bold mb-2">التاريخ</label><input type="text" id="inp-date" class="form-control bg-white" readonly></div>
+                        <div class="row g-3 mb-4 bg-light p-3 rounded-3">
+                            <div class="col-md-3"><label class="small fw-bold">القسم / الفرع (21 فرع)</label><select id="order-dept" class="form-select"></select></div>
+                            <div class="col-md-3"><label class="small fw-bold">مقدم الطلب</label><input type="text" id="order-user" class="form-control bg-white" readonly></div>
+                            <div class="col-md-3"><label class="small fw-bold">الوظيفة</label><input type="text" id="order-job" class="form-control bg-white" readonly></div>
+                            <div class="col-md-3"><label class="small fw-bold">التوقيت</label><input type="text" id="order-time" class="form-control bg-white" readonly></div>
                         </div>
-                        <div class="table-responsive">
-                            <table class="table align-middle erp-table">
-                                <thead>
-                                    <tr>
-                                        <th>البراند (Brand)</th>
-                                        <th width="320">المقاس (W / H / R)</th>
-                                        <th width="100">الكمية</th>
-                                        <th class="p-auth-cost">التكلفة (الوحدة)</th>
-                                        <th class="p-auth-cost">الإجمالي</th>
-                                        <th>#</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="order-rows"></tbody>
-                            </table>
+                        <table class="table erp-table table-bordered align-middle">
+                            <thead class="table-dark">
+                                <tr class="text-center">
+                                    <th width="40">#</th><th>البراند</th><th width="280">المقاس (W/H/R)</th><th width="100">الكمية</th><th>التكلفة</th><th>الإجمالي</th><th>تحريك</th><th>حذف</th>
+                                </tr>
+                            </thead>
+                            <tbody id="order-rows"></tbody>
+                        </table>
+                        <button class="btn btn-outline-primary fw-bold" onclick="addOrderRow()">+ إضافة صنف جديد</button>
+                        <div class="mt-4 p-3 bg-dark text-white rounded d-flex justify-content-between align-items-center">
+                            <h5 class="m-0">مجموع الأصناف: <span id="total-qty">0</span></h5>
+                            <h3 class="m-0 fw-bold">الإجمالي النهائي: <span id="grand-total">0.00</span> ر.س</h3>
                         </div>
-                        <button class="btn btn-outline-primary fw-bold px-4 mt-2" onclick="createNewRow()">+ إضافة صنف جديد</button>
-                        <div class="text-end mt-4 p-4 bg-dark text-white rounded-4 shadow-lg">
-                            <h3 class="m-0 fw-bold">الإجمالي النهائي: <span id="grand-total" class="text-warning">0.00</span> ر.س</h3>
-                        </div>
-                        <button class="btn btn-primary w-100 p-3 mt-4 fw-bold fs-5 shadow" onclick="saveOrder()">حفظ الطلب وإرساله إلى السحابة</button>
+                        <button class="btn btn-primary w-100 p-3 mt-4 fw-bold shadow-lg" onclick="saveOrder()">حفظ الطلب وإرسال للمراجعة</button>
+                    </div>
+                </section>
+
+                <section id="tab-review" class="tab-pane" style="display:none;">
+                    <div class="card p-4 shadow-sm border-0">
+                        <h4 class="fw-bold mb-4 text-info">طلبات قيد المراجعة</h4>
+                        <div id="review-container"></div>
                     </div>
                 </section>
 
                 <section id="tab-settings" class="tab-pane" style="display:none;">
-                    <div class="card p-4 border-0 shadow-sm">
-                        <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h5 class="fw-bold m-0">إدارة الموظفين والصلاحيات</h5>
-                            <button class="btn btn-success fw-bold" onclick="openUserModal()">+ إضافة موظف جديد</button>
+                    <div class="row g-4">
+                        <div class="col-md-4">
+                            <div class="card p-3 shadow-sm">
+                                <h5 class="fw-bold mb-3 border-bottom pb-2">تنسيق المظهر</h5>
+                                <div class="mb-3"><label class="small fw-bold">لون النظام الرئيسي</label><input type="color" id="set-color" class="form-control h-auto" onchange="applyStyles()"></div>
+                                <div class="mb-3"><label class="small fw-bold">حجم الخط</label><input type="range" id="set-font" min="12" max="22" class="form-range" onchange="applyStyles()"></div>
+                            </div>
                         </div>
-                        <table class="table table-hover text-center align-middle">
-                            <thead class="table-light"><tr><th>اسم المستخدم</th><th>القسم</th><th>عرض التكاليف</th><th>الإجراء</th></tr></thead>
-                            <tbody id="users-table"></tbody>
-                        </table>
+                        <div class="col-md-8">
+                            <div class="card p-3 shadow-sm">
+                                <div class="d-flex justify-content-between mb-3 border-bottom pb-2">
+                                    <h5 class="fw-bold">إدارة المستخدمين</h5>
+                                    <button class="btn btn-success btn-sm" onclick="openUserModal()">+ مستخدم جديد</button>
+                                </div>
+                                <div id="users-list-ui"></div>
+                            </div>
+                        </div>
                     </div>
                 </section>
             </main>
@@ -165,241 +134,22 @@
 
     <div class="modal fade" id="userModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 rounded-4 shadow-lg">
-                <div class="modal-header bg-primary text-white p-4">
-                    <h5 class="fw-bold m-0">إعداد بيانات الموظف</h5>
+            <div class="modal-content p-4 border-0 shadow-lg">
+                <h4 class="fw-bold mb-3">إعدادات المستخدم</h4>
+                <div class="mb-2"><label class="small fw-bold">الاسم</label><input type="text" id="u-name" class="form-control"></div>
+                <div class="mb-2"><label class="small fw-bold">كلمة السر</label><input type="text" id="u-pass" class="form-control"></div>
+                <div class="mb-2"><label class="small fw-bold">الوظيفة</label><input type="text" id="u-job" class="form-control"></div>
+                <div class="row mt-3">
+                    <div class="col-6"><div class="form-check"><input class="form-check-input" type="checkbox" id="u-p-admin"><label class="form-check-label small fw-bold">مدير نظام</label></div></div>
+                    <div class="col-6"><div class="form-check"><input class="form-check-input" type="checkbox" id="u-p-review"><label class="form-check-label small fw-bold">حق المراجعة</label></div></div>
                 </div>
-                <div class="modal-body p-4">
-                    <div class="mb-3"><label class="small fw-bold">اسم المستخدم</label><input type="text" id="u-name" class="form-control"></div>
-                    <div class="mb-3"><label class="small fw-bold">كلمة السر</label><input type="text" id="u-pass" class="form-control"></div>
-                    <div class="mb-3"><label class="small fw-bold">القسم</label><select id="u-dept" class="form-select"></select></div>
-                    <div class="form-check mt-3">
-                        <input class="form-check-input" type="checkbox" id="u-cost-auth">
-                        <label class="form-check-label fw-bold small">السماح لهذا الموظف برؤية التكاليف المالية</label>
-                    </div>
-                </div>
-                <div class="modal-footer border-0 p-4">
-                    <button class="btn btn-primary w-100 p-2 fw-bold" onclick="saveUserToDB()">حفظ الموظف</button>
-                </div>
+                <button class="btn btn-primary w-100 mt-4 p-2 fw-bold" onclick="saveUser()">حفظ البيانات</button>
             </div>
         </div>
     </div>
 
-    <script>
-        // --- 1. إعدادات الأمان وقاعدة البيانات (Master Sync) ---
-        const MASTER_ADMIN = { name: "admin", pass: "@Mm123321", auths: { cost: true, users: true } };
-        let usersDB = JSON.parse(localStorage.getItem('erp_users')) || [MASTER_ADMIN];
-        let ordersDB = JSON.parse(localStorage.getItem('erp_all_orders')) || [];
-        let currentUser = null;
-
-        const branches = Array.from({length: 21}, (_, i) => `فرع النهدي ${i + 1}`);
-        const staticDepts = ["قسم الشركات", "قسم الاستيراد", "قسم الجملة", "إدارة المشتريات", ...branches];
-
-        // --- 2. محرك الدخول وإصلاح الـ Admin ---
-        function togglePass(id, btn) {
-            const inp = document.getElementById(id);
-            const icon = btn.querySelector('i');
-            inp.type = inp.type === "password" ? "text" : "password";
-            icon.className = inp.type === "password" ? "bi bi-eye" : "bi bi-eye-slash";
-        }
-
-        function handleLogin() {
-            const uInput = document.getElementById('user-login').value.trim();
-            const pInput = document.getElementById('pass-login').value.trim();
-            const err = document.getElementById('login-error');
-
-            // تحقق مزدوج (من الكود الصلب أولاً ثم من الذاكرة)
-            if (uInput === MASTER_ADMIN.name && pInput === MASTER_ADMIN.pass) {
-                currentUser = MASTER_ADMIN;
-            } else {
-                const found = usersDB.find(u => u.name === uInput && u.pass === pInput);
-                if (found) currentUser = found;
-            }
-
-            if (currentUser) {
-                document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('app-container').style.display = 'block';
-                initApp();
-            } else {
-                err.style.display = 'block';
-            }
-        }
-
-        // --- 3. تهيئة الواجهة والبيانات ---
-        function initApp() {
-            const selDept = document.getElementById('inp-dept');
-            const selUserDept = document.getElementById('u-dept');
-            
-            if(selDept.options.length === 0) {
-                staticDepts.forEach(d => {
-                    selDept.add(new Option(d, d));
-                    selUserDept.add(new Option(d, d));
-                });
-            }
-
-            document.getElementById('inp-user').value = currentUser.name;
-            document.getElementById('display-user-name').innerText = currentUser.name;
-            document.getElementById('user-avatar-initial').innerText = currentUser.name.charAt(0).toUpperCase();
-            document.getElementById('inp-date').value = new Date().toLocaleDateString('ar-SA');
-
-            // تطبيق الصلاحيات
-            if (currentUser.name !== "admin" && !currentUser.auths.users) {
-                document.querySelector('.p-auth-users').style.display = 'none';
-            }
-
-            refreshDashboard();
-            renderUsersList();
-            if(document.getElementById('order-rows').children.length === 0) createNewRow();
-        }
-
-        // --- 4. إدارة جدول طلبات الشراء (المقاسات الثلاثية) ---
-        function createNewRow() {
-            const body = document.getElementById('order-rows');
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td><input type="text" class="form-control" placeholder="البراند"></td>
-                <td>
-                    <div class="d-flex gap-1">
-                        <input type="text" class="form-control text-center" placeholder="W" title="العرض">
-                        <input type="text" class="form-control text-center" placeholder="H" title="الارتفاع">
-                        <input type="text" class="form-control text-center" placeholder="R" title="القطر">
-                    </div>
-                </td>
-                <td><input type="number" class="form-control qty" value="1" onchange="calc()"></td>
-                <td class="p-auth-cost"><input type="number" class="form-control cost" value="0" onchange="calc()"></td>
-                <td class="p-auth-cost fw-bold text-primary row-total">0.00</td>
-                <td><button class="btn btn-sm text-danger fs-4" onclick="this.closest('tr').remove(); calc();">×</button></td>
-            `;
-            body.appendChild(tr);
-            applyUIPerms();
-        }
-
-        function applyUIPerms() {
-            if(currentUser && !currentUser.auths.cost) {
-                document.querySelectorAll('.p-auth-cost').forEach(el => el.style.display = 'none');
-            }
-        }
-
-        function calc() {
-            let grand = 0, items = 0;
-            document.querySelectorAll('#order-rows tr').forEach(row => {
-                const q = parseFloat(row.querySelector('.qty').value) || 0;
-                const c = parseFloat(row.querySelector('.cost').value) || 0;
-                const sub = q * c;
-                row.querySelector('.row-total').innerText = sub.toFixed(2);
-                grand += sub; items += q;
-            });
-            document.getElementById('grand-total').innerText = grand.toLocaleString(undefined, {minimumFractionDigits: 2});
-            document.getElementById('dash-items').innerText = items;
-        }
-
-        function saveOrder() {
-            const total = parseFloat(document.getElementById('grand-total').innerText.replace(/,/g, ''));
-            if(total <= 0 && currentUser.auths.cost) return alert("الطلب فارغ أو التكلفة صفر!");
-
-            const newOrder = {
-                branch: document.getElementById('inp-dept').value,
-                total: total,
-                qty: parseInt(document.getElementById('dash-items').innerText),
-                date: new Date().toISOString(),
-                user: currentUser.name
-            };
-
-            ordersDB.push(newOrder);
-            localStorage.setItem('erp_all_orders', JSON.stringify(ordersDB));
-            alert("✅ تم حفظ الطلب وإرساله بنجاح!");
-            
-            // تصفية الجدول للطلب القادم
-            document.getElementById('order-rows').innerHTML = "";
-            createNewRow();
-            refreshDashboard();
-        }
-
-        // --- 5. لوحة التحكم والتحليل ---
-        function refreshDashboard() {
-            document.getElementById('dash-total').innerText = ordersDB.reduce((s,o)=>s+o.total, 0).toLocaleString();
-            document.getElementById('dash-count').innerText = ordersDB.length;
-            renderChart();
-        }
-
-        function renderChart() {
-            const ctx = document.getElementById('mainChart').getContext('2d');
-            if(window.myChart) window.myChart.destroy();
-            
-            // عرض آخر 10 طلبات
-            const lastData = ordersDB.slice(-10);
-            window.myChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: lastData.map(o => new Date(o.date).toLocaleDateString('ar-SA')),
-                    datasets: [{ 
-                        label: 'قيمة المشتريات', 
-                        data: lastData.map(o => o.total), 
-                        borderColor: '#004a99', 
-                        backgroundColor: 'rgba(0,74,153,0.1)',
-                        fill: true,
-                        tension: 0.4 
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false }
-            });
-        }
-
-        // --- 6. إدارة المستخدمين ---
-        function renderUsersList() {
-            const table = document.getElementById('users-table');
-            table.innerHTML = "";
-            usersDB.forEach((u, i) => {
-                table.innerHTML += `<tr>
-                    <td class="fw-bold text-dark">${u.name} ${u.name === 'admin' ? '⭐' : ''}</td>
-                    <td>${u.dept || 'عام'}</td>
-                    <td><span class="badge ${u.auths.cost ? 'bg-success' : 'bg-secondary'}">${u.auths.cost ? 'مفعل' : 'محجوب'}</span></td>
-                    <td>
-                        ${u.name !== 'admin' ? `<button class="btn btn-sm btn-outline-danger" onclick="deleteUser(${i})"><i class="bi bi-trash"></i></button>` : '---'}
-                    </td>
-                </tr>`;
-            });
-        }
-
-        function openUserModal() { new bootstrap.Modal(document.getElementById('userModal')).show(); }
-
-        function saveUserToDB() {
-            const n = document.getElementById('u-name').value.trim();
-            const p = document.getElementById('u-pass').value.trim();
-            if(!n || !p) return alert("أكمل البيانات!");
-
-            usersDB.push({ 
-                name: n, 
-                pass: p, 
-                dept: document.getElementById('u-dept').value,
-                auths: { cost: document.getElementById('u-cost-auth').checked, users: false } 
-            });
-            localStorage.setItem('erp_users', JSON.stringify(usersDB));
-            renderUsersList();
-            bootstrap.Modal.getInstance(document.getElementById('userModal')).hide();
-        }
-
-        function deleteUser(i) {
-            if(confirm("هل أنت متأكد من حذف هذا المستخدم؟")) {
-                usersDB.splice(i, 1);
-                localStorage.setItem('erp_users', JSON.stringify(usersDB));
-                renderUsersList();
-            }
-        }
-
-        // --- 7. دوال التحكم بالواجهة ---
-        function showTab(id, btn) {
-            document.querySelectorAll('.tab-pane').forEach(p => p.style.display = 'none');
-            document.getElementById('tab-' + id).style.display = 'block';
-            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-            btn.classList.add('active');
-        }
-
-        function toggleSidebar() { 
-            const s = document.getElementById('sidebar');
-            s.style.display = (s.style.display === 'none' || s.style.display === '') ? 'block' : 'none';
-        }
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
