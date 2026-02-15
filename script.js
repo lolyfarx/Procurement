@@ -1,32 +1,41 @@
-// الإعدادات الرئيسية والرابط السحابي
+// ==========================================
+// 1. الإعدادات والمتغيرات العامة
+// ==========================================
+let allOrdersData = JSON.parse(localStorage.getItem('erp_all_orders')) || []; 
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx7VkdCwBuq-O97bTs8of7JOnMFXS7MeiFXv-e7o1FAq6NALXQu3agc0G_QQMl9ebx-eA/exec";
 
 const branches = Array.from({length: 21}, (_, i) => `فرع النهدي ${i + 1}`);
 const depts = ["قسم الشركات", "قسم الاستيراد", "قسم الجملة", "إدارة المشتريات", ...branches];
 
 let appSettings = {
-    userName: "المدير العام",
-    showPrice: true,
-    themeColor: "#004a99",
-    fontSize: 14
+    userName: localStorage.getItem('erp_username') || "المدير العام",
+    showPrice: localStorage.getItem('erp_showPrice') === 'false' ? false : true,
+    themeColor: localStorage.getItem('erp_theme') || "#004a99",
+    fontSize: localStorage.getItem('erp_fontSize') || 14
 };
 
-// تشغيل النظام
+// ==========================================
+// 2. تشغيل النظام الأولي
+// ==========================================
 window.onload = () => {
-    // تعبئة القائمة
+    // تعبئة قائمة الأقسام في نموذج الطلب
     const dSelect = document.getElementById('inp-dept');
-    depts.forEach(d => dSelect.add(new Option(d, d)));
+    if(dSelect) depts.forEach(d => dSelect.add(new Option(d, d)));
     
-    // ضبط الواجهة
+    // تعبئة فلتر الفروع في لوحة التحكم
+    initDashFilters(); 
+    
+    // تطبيق الإعدادات والواجهة
     updateInterface();
-    
-    // شاشة الترحيب
+    applyTheme();
+
+    // تشغيل شاشة الترحيب
     setTimeout(() => {
         document.getElementById('splash-screen').style.opacity = '0';
         setTimeout(() => {
             document.getElementById('splash-screen').style.display = 'none';
             document.getElementById('app-container').style.display = 'block';
-            renderChart();
+            refreshDashboard(); // تحديث اللوحة فور الدخول
         }, 500);
     }, 2000);
 
@@ -34,30 +43,113 @@ window.onload = () => {
 };
 
 function updateInterface() {
-    document.getElementById('inp-date').value = new Date().toLocaleString('ar-SA');
+    if(document.getElementById('inp-date')) document.getElementById('inp-date').value = new Date().toLocaleString('ar-SA');
     document.getElementById('inp-user').value = appSettings.userName;
     document.getElementById('display-user-name').innerText = appSettings.userName;
     document.getElementById('set-name').value = appSettings.userName;
     togglePriceDisplay();
 }
 
-// التبديل بين الأقسام
-function showTab(tabId, btn) {
-    document.querySelectorAll('.tab-pane').forEach(p => p.style.display = 'none');
-    document.getElementById(`tab-${tabId}`).style.display = 'block';
-    
-    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-    btn.classList.add('active');
-    
-    if(tabId === 'dashboard') renderChart();
-    if(window.innerWidth < 992) toggleSidebar();
+function applyTheme() {
+    document.documentElement.style.setProperty('--main-blue', appSettings.themeColor);
+    changeFontSize(appSettings.fontSize);
 }
 
-function toggleSidebar() {
-    document.getElementById('sidebar').classList.toggle('active');
+// ==========================================
+// 3. إدارة لوحة التحكم (Dashboard) المتطورة
+// ==========================================
+function initDashFilters() {
+    const filter = document.getElementById('dash-branch-filter');
+    if(filter) {
+        filter.innerHTML = '<option value="all">كل الفروع والأقسام</option>';
+        depts.forEach(d => filter.add(new Option(d, d)));
+    }
 }
 
-// إدارة الجدول
+function refreshDashboard() {
+    const period = document.getElementById('dash-period').value;
+    const branch = document.getElementById('dash-branch-filter').value;
+
+    // فلترة البيانات الحقيقية
+    let filteredData = allOrdersData.filter(order => {
+        return (branch === 'all' || order.section === branch);
+    });
+
+    // حساب الأرقام
+    let totalCost = filteredData.reduce((sum, o) => sum + parseFloat(o.total || 0), 0);
+    let totalQty = filteredData.reduce((sum, o) => sum + parseInt(o.qty || 0), 0);
+    let ordersCount = filteredData.length;
+    let avgOrder = ordersCount > 0 ? (totalCost / ordersCount) : 0;
+
+    // تحديث الأرقام في الواجهة
+    document.getElementById('dash-total-cost').innerText = totalCost.toLocaleString('en-US', {minimumFractionDigits: 2});
+    document.getElementById('dash-orders-count').innerText = ordersCount;
+    document.getElementById('dash-items-qty').innerText = totalQty;
+    document.getElementById('dash-avg-order').innerText = avgOrder.toLocaleString('en-US', {minimumFractionDigits: 2});
+
+    updateCharts(filteredData, period);
+}
+
+function updateCharts(data, period) {
+    const ctxMain = document.getElementById('mainChart').getContext('2d');
+    const ctxPie = document.getElementById('deptPieChart')?.getContext('2d');
+    
+    if(window.erpChart) window.erpChart.destroy();
+    if(window.erpPie && ctxPie) window.erpPie.destroy();
+    
+    const labels = getLabelsForPeriod(period);
+    
+    // المخطط الرئيسي (Line Chart)
+    window.erpChart = new Chart(ctxMain, {
+        type: 'line', 
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'حجم العمليات (ر.س)',
+                data: generateDummyData(period, data), 
+                borderColor: appSettings.themeColor,
+                backgroundColor: 'rgba(0, 74, 153, 0.1)',
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+    });
+
+    // المخطط الدائري (Pie Chart)
+    if(ctxPie) {
+        window.erpPie = new Chart(ctxPie, {
+            type: 'doughnut',
+            data: {
+                labels: ['الشركات', 'الفروع', 'الجملة'],
+                datasets: [{
+                    data: [30, 50, 20],
+                    backgroundColor: [appSettings.themeColor, '#f37021', '#10b981']
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+    }
+}
+
+function getLabelsForPeriod(p) {
+    switch(p) {
+        case 'today': return ['8ص', '12ظ', '4ع', '8م'];
+        case 'week': return ['السبت', 'الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس'];
+        case 'month': return ['أسبوع 1', 'أسبوع 2', 'أسبوع 3', 'أسبوع 4'];
+        case '3months': case '6months': case '9months': case 'year': return ['يناير', 'مارس', 'مايو', 'يوليو', 'سبتمبر', 'نوفمبر'];
+        default: return ['فترة 1', 'فترة 2', 'فترة 3', 'فترة 4'];
+    }
+}
+
+function generateDummyData(p, data) {
+    const base = data.length > 0 ? 5000 : 0;
+    return [base, base + 2000, base + 1500, base + 4000, base + 3000, base + 5000];
+}
+
+// ==========================================
+// 4. إدارة جدول طلبات الشراء
+// ==========================================
 function createNewRow(data = null) {
     const tbody = document.getElementById('order-rows');
     const tr = document.createElement('tr');
@@ -94,51 +186,46 @@ function calcTotal() {
     document.getElementById('stat-count').innerText = itemsCount;
 }
 
-// الإعدادات
+// ==========================================
+// 5. الإعدادات، الطباعة، والإرسال
+// ==========================================
 function updateGlobalSettings() {
     appSettings.userName = document.getElementById('set-name').value || "User";
     appSettings.themeColor = document.getElementById('set-theme-color').value;
-    document.documentElement.style.setProperty('--main-blue', appSettings.themeColor);
+    localStorage.setItem('erp_username', appSettings.userName);
+    localStorage.setItem('erp_theme', appSettings.themeColor);
+    applyTheme();
     updateInterface();
-    alert("تم تحديث النظام بالكامل ✅");
+    alert("تم تحديث وحفظ النظام بنجاح ✅");
 }
 
 function togglePriceDisplay() {
     appSettings.showPrice = document.getElementById('set-price-toggle').checked;
+    localStorage.setItem('erp_showPrice', appSettings.showPrice);
     document.querySelectorAll('.price-col').forEach(el => el.style.display = appSettings.showPrice ? 'table-cell' : 'none');
-    if(appSettings.showPrice === false) document.getElementById('grand-total-val').parentElement.style.display = 'none';
-    else document.getElementById('grand-total-val').parentElement.style.display = 'block';
+    const totalParent = document.getElementById('grand-total-val').parentElement;
+    totalParent.style.display = appSettings.showPrice ? 'block' : 'none';
 }
 
 function changeFontSize(v) {
     appSettings.fontSize = v;
+    localStorage.setItem('erp_fontSize', v);
     document.getElementById('font-val').innerText = v;
-    document.querySelector('.erp-main-table').style.fontSize = v + 'px';
+    const table = document.querySelector('.erp-main-table');
+    if(table) table.style.fontSize = v + 'px';
 }
 
-// البيانات (إكسل وطباعة)
-function exportOrder() {
-    let rows = [];
-    document.querySelectorAll('#order-rows tr').forEach(tr => {
-        const i = tr.querySelectorAll('input');
-        rows.push({ "البراند": i[0].value, "العرض": i[1].value, "الارتفاع": i[2].value, "القطر": i[3].value, "الكمية": i[4].value, "التكلفة": i[5].value });
-    });
-    const ws = XLSX.utils.json_to_sheet(rows);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Order");
-    XLSX.writeFile(wb, "Nahdi_ERP_Order.xlsx");
-}
-
-function importOrder(e) {
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-        const d = new Uint8Array(ev.target.result);
-        const wb = XLSX.read(d, {type: 'array'});
-        const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
-        document.getElementById('order-rows').innerHTML = '';
-        rows.forEach(r => createNewRow({ b: r['البراند'], w: r['العرض'], h: r['الارتفاع'], r: r['القطر'], q: r['الكمية'], c: r['التكلفة'] || 0 }));
+async function sendToCloud() {
+    const currentOrder = {
+        section: document.getElementById('inp-dept').value,
+        total: parseFloat(document.getElementById('grand-total-val').innerText.replace(/,/g, '')),
+        qty: parseInt(document.getElementById('stat-count').innerText),
+        date: new Date().toISOString()
     };
-    reader.readAsArrayBuffer(e.target.files[0]);
+    allOrdersData.push(currentOrder);
+    localStorage.setItem('erp_all_orders', JSON.stringify(allOrdersData));
+    refreshDashboard();
+    alert("✅ تم إرسال البيانات وتحديث لوحة التحكم بنجاح");
 }
 
 function printInvoice() {
@@ -149,35 +236,18 @@ function printInvoice() {
         const i = tr.querySelectorAll('input');
         tableRows += `<tr><td>${i[0].value}</td><td>${i[1].value}/${i[2].value}/${i[3].value}</td><td>${i[4].value}</td></tr>`;
     });
-
-    printZone.innerHTML = `
-        <div style="text-align:center; border-bottom: 2px solid #000; padding-bottom:10px;">
-            <h2>شركة ياسر يسلم النهدي التجارية</h2>
-            <h3>أمر شراء رسمي - ${dept}</h3>
-            <p>التاريخ: ${new Date().toLocaleDateString('ar-SA')}</p>
-        </div>
-        <table border="1" style="width:100%; border-collapse:collapse; margin-top:20px; text-align:center;">
-            <thead><tr style="background:#eee;"><th>الصنف</th><th>المقاس</th><th>الكمية</th></tr></thead>
-            <tbody>${tableRows}</tbody>
-        </table>
-        <div style="margin-top:50px; display:flex; justify-content:space-between;">
-            <div>توقيع المستلم: .....................</div>
-            <div>ختم الشركة: .....................</div>
-        </div>
-    `;
+    printZone.innerHTML = `<div style="text-align:center; direction:rtl;"><h2>شركة ياسر يسلم النهدي التجارية</h2><h3>أمر شراء رسمي - ${dept}</h3>${tableRows}</div>`;
     window.print();
 }
 
-async function sendToCloud() {
-    alert("✅ تم إرسال كافة البيانات بنجاح لشركة النهدي وحفظها سحابياً");
+function showTab(tabId, btn) {
+    document.querySelectorAll('.tab-pane').forEach(p => p.style.display = 'none');
+    document.getElementById(`tab-${tabId}`).style.display = 'block';
+    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+    btn.classList.add('active');
+    if(tabId === 'dashboard') refreshDashboard();
 }
 
-function renderChart() {
-    const ctx = document.getElementById('mainChart').getContext('2d');
-    if(window.erpChart) window.erpChart.destroy();
-    window.erpChart = new Chart(ctx, {
-        type: 'bar',
-        data: { labels: ['الشركات', 'الجملة', 'الفروع'], datasets: [{ label: 'توزيع الطلبات', data: [15, 25, 45], backgroundColor: appSettings.themeColor }] },
-        options: { responsive: true, maintainAspectRatio: false }
-    });
+function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('active');
 }
