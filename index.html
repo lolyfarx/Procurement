@@ -221,10 +221,78 @@
                                 <div class="col-md-4">
                                     <label class="form-label fw-bold">الجهة الطالبة</label>
                                     <select class="form-select form-select-lg" id="req-dept">
-                                        <option>فرع جدة الرئيسي</option>
-                                        <option>فرع الرياض - السلي</option>
-                                        <option>مستودع المنطقة الشرقية</option>
-                                        <option>قسم الاستيراد (الميناء)</option>
+                                        <optgroup label="الأقسام الرئيسية">
+                                        <option>الإدارة العامة</option>
+                                        <option>قسم الاستيراد</option>
+                                        <option>قسم الشركات</option>
+                                        <option>قسم الجملة/option>
+                                        <option>قسم المناقصات/option>
+                                        </optgroup>
+                                        <optgroup label="الفروع الـ 21">
+                                        <option>فرع النهدي 15 (الرئيسي)</option>
+                                        <option>فرع النهدي 1</option>
+                                        <option>فرع النهدي 2  </option>
+                                        <option>فرع النهدي 3  </option>
+                                        <option>فرع النهدي 4</option>
+                                        <option>فرع النهدي 5</option>
+                                        <option>فرع النهدي 6 </option>
+                                        <option>فرع النهدي 7 </option>
+                                        <option>فرع النهدي 8 </option>
+                                        <option>فرع  النهدي 9 </option>
+                                        <option>فرع النهدي 10 </option>
+                                        <option>فرع النهدي 11 </option>
+                                        <option>فرع النهدي 12 </option>
+                                        <option>فرع النهدي 13 </option>
+                                        <option>فرع النهدي 14 </option>
+                                        <option>فرع النهدي 15 </option>
+                                        <option>فرع النهدي 16 </option>
+                                        <option>فرع النهدي 17 </option>
+                                        <option>فرع النهدي 18 </option>
+                                        <option>فرع النهدي 19 </option>
+                                        <option>فرع النهدي 20 </option>
+                                        <option>فرع النهدي 21 </option>
+
+    </optgroup>
+</select>
+                                        <aside class="odoo-sidebar" id="sidebar">
+    <div class="text-muted small fw-bold mb-4 px-3">لوحات البيانات</div>
+    <a href="#" class="nav-item active" onclick="erp.switchSection('dashboard')"><i class="bi bi-speedometer2"></i> المركز الرئيسي</a>
+    
+    <div class="text-muted small fw-bold mb-4 mt-4 px-3">العمليات التشغيلية</div>
+    <a href="#" class="nav-item" onclick="erp.switchSection('new-request')"><i class="bi bi-cart-plus"></i> طلب شراء جديد</a>
+    <a href="#" class="nav-item" onclick="erp.switchSection('admin-review')"><i class="bi bi-shield-check"></i> وحدة الرقابة المالية</a>
+    
+    <div class="text-muted small fw-bold mb-2 mt-4 px-3">أقسام الشركة وفروعنا (21)</div>
+    <div style="max-height: 300px; overflow-y: auto; padding: 0 5px;">
+        <a href="#" class="nav-item small py-2 text-primary fw-bold"><i class="bi bi-building"></i> الإدارة العامة</a>
+        <a href="#" class="nav-item small py-2"><i class="bi bi-ship"></i> قسم الاستيراد</a>
+        <a href="#" class="nav-item small py-2"><i class="bi bi-people"></i> قسم الشركات</a>
+         <a href="#" class="nav-item small py-2"><i class="bi bi-people"></i> قسم الجملة</a>
+        <a href="#" class="nav-item small py-2"><i class="bi bi-people"></i> قسم المناقصات</a>
+        <hr class="my-2">
+        <a href="#" class="nav-item small py-1"><i class="bi bi-geo-alt"></i> فرع النهدي 15 (الرئيسي)</a>
+        <a href="#" class="nav-item small py-1"><i class="bi bi-geo-alt"></i> فرع النهدي 1</a>
+        <a href="#" class="nav-item small py-1"><i class="bi bi-geo-alt"></i> 3 فرع النهدي</a>
+        <a href="#" class="nav-item small py-1"><i class="bi bi-geo-alt"></i> 4 فرع النهدي</a>
+        <a href="#" class="nav-item small py-1"><i class="bi bi-geo-alt"></i> 5 فرع النهدي</a>
+        <a href="#" class="nav-item small py-1"><i class="bi bi-geo-alt"></i> 6 فرع النهدي</a>
+        <a href="#" class="nav-item small py-1"><i class="bi bi-geo-alt"></i> 7 فرع النهدي</a>
+        <a href="#" class="nav-item small py-1"><i class="bi bi-geo-alt"></i> 8 فرع النهدي</a>
+        <a href="#" class="nav-item small py-1"><i class="bi bi-geo-alt"></i> 9 فرع النهدي</a>
+        <a href="#" class="nav-item small py-1"><i class="bi bi-geo-alt"></i> 10 فرع النهدي</a>
+        <a href="#" class="nav-item small py-1"><i class="bi bi-geo-alt"></i> 11 فرع النهدي</a>
+        <a href="#" class="nav-item small py-1"><i class="bi bi-geo-alt"></i> 12 فرع النهدي</a>
+        <a href="#" class="nav-item small py-1"><i class="bi bi-geo-alt"></i> 13 فرع النهدي</a>
+        <a href="#" class="nav-item small py-1"><i class="bi bi-geo-alt"></i> 14 فرع النهدي</a>
+        <a href="#" class="nav-item small py-1"><i class="bi bi-geo-alt"></i> 15 فرع النهدي</a>
+        <a href="#" class="nav-item small py-1"><i class="bi bi-geo-alt"></i> 16 فرع النهدي</a>
+        <a href="#" class="nav-item small py-1"><i class="bi bi-geo-alt"></i> 17 فرع النهدي</a>
+        <a href="#" class="nav-item small py-1"><i class="bi bi-geo-alt"></i> 18 فرع النهدي</a>
+        <a href="#" class="nav-item small py-1"><i class="bi bi-geo-alt"></i> 19 فرع النهدي</a>
+        <a href="#" class="nav-item small py-1"><i class="bi bi-geo-alt"></i> 20 فرع النهدي</a>
+        <a href="#" class="nav-item small py-1"><i class="bi bi-geo-alt"></i> 21 فرع النهدي</a>
+    </div>
+</aside>
                                     </select>
                                 </div>
                                 <div class="col-md-4">
